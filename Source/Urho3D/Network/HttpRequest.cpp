@@ -33,8 +33,8 @@
 namespace Urho3D
 {
 
-static const unsigned ERROR_BUFFER_SIZE = 256;
-static const unsigned READ_BUFFER_SIZE = 65536; // Must be a power of two
+#define ERROR_BUFFER_SIZE 256
+#define READ_BUFFER_SIZE  65536 // Must be a power of two
 
 HttpRequest::HttpRequest(const String& url, const String& verb, const Vector<String>& headers, const String& postData) :
     url_(url.Trimmed()),

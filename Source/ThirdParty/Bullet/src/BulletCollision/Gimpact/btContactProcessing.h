@@ -37,9 +37,9 @@ Configuration var for applying interpolation of  contact normals
 
 #define CONTACT_DIFF_EPSILON 0.00001f
 
-///The GIM_CONTACT is an internal GIMPACT structure, similar to btManifoldPoint.
-///@todo: remove and replace GIM_CONTACT by btManifoldPoint.
-class GIM_CONTACT
+///The btGimContact is an internal GIMPACT structure, similar to btManifoldPoint.
+///@todo: remove and replace btGimContact by btManifoldPoint.
+class btGimContact
 {
 public:
     btVector3 m_point;
@@ -49,11 +49,11 @@ public:
     int m_feature1;//Face number
     int m_feature2;//Face number
 public:
-    GIM_CONTACT()
+    btGimContact()
     {
     }
 
-    GIM_CONTACT(const GIM_CONTACT & contact):
+    btGimContact(const btGimContact & contact):
 				m_point(contact.m_point),
 				m_normal(contact.m_normal),
 				m_depth(contact.m_depth),
@@ -62,7 +62,7 @@ public:
     {
     }
 
-    GIM_CONTACT(const btVector3 &point,const btVector3 & normal,
+    btGimContact(const btVector3 &point,const btVector3 & normal,
     	 			btScalar depth, int feature1, int feature2):
 				m_point(point),
 				m_normal(normal),
@@ -108,7 +108,7 @@ public:
 };
 
 
-class btContactArray:public btAlignedObjectArray<GIM_CONTACT>
+class btContactArray:public btAlignedObjectArray<btGimContact>
 {
 public:
 	btContactArray()
@@ -120,7 +120,7 @@ public:
 		const btVector3 &point,const btVector3 & normal,
 		btScalar depth, int feature1, int feature2)
 	{
-		push_back( GIM_CONTACT(point,normal,depth,feature1,feature2) );
+		push_back( btGimContact(point,normal,depth,feature1,feature2) );
 	}
 
 	SIMD_FORCE_INLINE void push_triangle_contacts(
@@ -142,4 +142,4 @@ public:
 };
 
 
-#endif // GIM_CONTACT_H_INCLUDED
+#endif // btGimContact_H_INCLUDED

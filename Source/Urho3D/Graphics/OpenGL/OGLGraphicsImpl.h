@@ -29,7 +29,9 @@
 #include "../../Graphics/Texture2D.h"
 #include "../../Math/Color.h"
 
-#if defined(IOS)
+#if defined(QT_GUI_LIB) || defined(QT_OPENGL_LIB)
+#include <qgl/gl.h>
+#elif defined(IOS)
 #include <OpenGLES/ES2/gl.h>
 #include <OpenGLES/ES2/glext.h>
 #elif defined(__ANDROID__) || defined (__arm__) || defined(__aarch64__) || defined (__EMSCRIPTEN__)

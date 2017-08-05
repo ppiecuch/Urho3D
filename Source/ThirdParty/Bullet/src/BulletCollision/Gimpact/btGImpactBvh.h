@@ -1,5 +1,5 @@
-#ifndef GIM_BOX_SET_H_INCLUDED
-#define GIM_BOX_SET_H_INCLUDED
+#ifndef BT_GIMPACTBVH_H_INCLUDED
+#define BT_GIMPACTBVH_H_INCLUDED
 
 /*! \file gim_box_set.h
 \author Francisco Leon Najera
@@ -35,20 +35,20 @@ subject to the following restrictions:
 
 
 //! Overlapping pair
-struct GIM_PAIR
+struct btGimPair
 {
     int m_index1;
     int m_index2;
-    GIM_PAIR()
+    btGimPair()
     {}
 
-    GIM_PAIR(const GIM_PAIR & p)
+    btGimPair(const btGimPair & p)
     {
     	m_index1 = p.m_index1;
     	m_index2 = p.m_index2;
 	}
 
-	GIM_PAIR(int index1, int index2)
+	btGimPair(int index1, int index2)
     {
     	m_index1 = index1;
     	m_index2 = index2;
@@ -56,7 +56,7 @@ struct GIM_PAIR
 };
 
 //! A pairset array
-class btPairSet: public btAlignedObjectArray<GIM_PAIR>
+class btPairSet: public btAlignedObjectArray<btGimPair>
 {
 public:
 	btPairSet()
@@ -65,12 +65,12 @@ public:
 	}
 	inline void push_pair(int index1,int index2)
 	{
-		push_back(GIM_PAIR(index1,index2));
+		push_back(btGimPair(index1,index2));
 	}
 
 	inline void push_pair_inv(int index1,int index2)
 	{
-		push_back(GIM_PAIR(index2,index1));
+		push_back(btGimPair(index2,index1));
 	}
 };
 
@@ -393,4 +393,4 @@ public:
 };
 
 
-#endif // GIM_BOXPRUNING_H_INCLUDED
+#endif // BT_GIMPACTBVH_H_INCLUDED

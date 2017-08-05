@@ -29,6 +29,8 @@
 #include "recog_intel.h"
 #include "libcpuid_util.h"
 
+#define NA      NA_INTEL
+#define NO_CODE NO_CODE_INTEL
 
 enum _intel_code_t {
 	NA,
@@ -666,9 +668,9 @@ static intel_code_t get_brand_code(struct cpu_id_t* data)
 			core_ix_base = CORE_HASWELL3;
 		
 		switch (bs[i + 9]) {
-			case '3': code = core_ix_base + 0; break;
-			case '5': code = core_ix_base + 1; break;
-			case '7': code = core_ix_base + 2; break;
+			case '3': code = (intel_code_t)(core_ix_base + 0); break;
+			case '5': code = (intel_code_t)(core_ix_base + 1); break;
+			case '7': code = (intel_code_t)(core_ix_base + 2); break;
 		}
 	}
 	if (need_matchtable) {
@@ -817,3 +819,6 @@ void cpuid_get_list_intel(struct cpu_list_t* list)
 {
 	generic_get_cpu_list(cpudb_intel, COUNT_OF(cpudb_intel), list);
 }
+
+#undef NA
+#undef NO_CODE

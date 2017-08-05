@@ -29,7 +29,9 @@
 #include "../IO/MemoryBuffer.h"
 #include "../IO/PackageFile.h"
 
-#ifdef __ANDROID__
+#if defined(QT_CORE_LIB)
+#include <QFile>
+#elif defined(__ANDROID__)
 #include <SDL/SDL_rwops.h>
 #endif
 
@@ -59,17 +61,17 @@ static const char* openMode[] =
 };
 #endif
 
-#ifdef __ANDROID__
+#if defined(__ANDROID__) || defined(QT_CORE_LIB)
 const char* APK = "/apk/";
-static const unsigned READ_BUFFER_SIZE = 32768;
+#define READ_BUFFER_SIZE 32768
 #endif
-static const unsigned SKIP_BUFFER_SIZE = 1024;
+#define SKIP_BUFFER_SIZE 1024
 
 File::File(Context* context) :
     Object(context),
     mode_(FILE_READ),
     handle_(0),
-#ifdef __ANDROID__
+#if defined(__ANDROID__) || defined(QT_CORE_LIB)
     assetHandle_(0),
 #endif
     readBufferOffset_(0),
@@ -86,7 +88,7 @@ File::File(Context* context, const String& fileName, FileMode mode) :
     Object(context),
     mode_(FILE_READ),
     handle_(0),
-#ifdef __ANDROID__
+#if defined(__ANDROID__) || defined(QT_CORE_LIB)
     assetHandle_(0),
 #endif
     readBufferOffset_(0),
@@ -104,7 +106,7 @@ File::File(Context* context, PackageFile* package, const String& fileName) :
     Object(context),
     mode_(FILE_READ),
     handle_(0),
-#ifdef __ANDROID__
+#if defined(__ANDROID__) || defined(QT_CORE_LIB)
     assetHandle_(0),
 #endif
     readBufferOffset_(0),

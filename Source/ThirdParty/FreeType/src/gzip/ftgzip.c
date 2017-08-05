@@ -774,5 +774,6 @@
 
 #endif /* !FT_CONFIG_OPTION_USE_ZLIB */
 
+#undef local
 
 /* END */

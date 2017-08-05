@@ -573,7 +573,7 @@ public:
 
 
 //! Compairison of transformation objects
-SIMD_FORCE_INLINE bool btCompareTransformsEqual(const btTransform & t1,const btTransform & t2)
+SIMD_FORCE_INLINE bool compare_transforms_equal(const btTransform & t1,const btTransform & t2)
 {
 	if(!(t1.getOrigin() == t2.getOrigin()) ) return false;
 

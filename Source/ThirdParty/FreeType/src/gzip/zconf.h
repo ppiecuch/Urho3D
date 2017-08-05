@@ -215,7 +215,7 @@
 #   define FAR
 #endif
 
-#if !defined(MACOS) && !defined(TARGET_OS_MAC)
+#if !defined(MACOS) && !defined(TARGET_OS_MAC) || defined(URHO3D_IS_UNITY_BUILD)
 typedef unsigned char  Byte;  /* 8 bits */
 #endif
 typedef unsigned int   uInt;  /* 16 bits or more */

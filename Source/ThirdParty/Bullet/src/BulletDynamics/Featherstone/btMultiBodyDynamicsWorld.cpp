@@ -1003,3 +1003,5 @@ void	btMultiBodyDynamicsWorld::serializeMultiBodies(btSerializer* serializer)
 	}
 
 }
+
+#undef output

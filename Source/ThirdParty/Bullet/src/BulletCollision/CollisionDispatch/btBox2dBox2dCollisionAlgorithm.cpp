@@ -419,3 +419,9 @@ void b2CollidePolygons(btManifoldResult* manifold,
 
 //	manifold->pointCount = pointCount;}
 }
+
+#undef b2Dot
+#undef b2Mul
+#undef b2MulT
+#undef b2Cross
+#undef btCrossS

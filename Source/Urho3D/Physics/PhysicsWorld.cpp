@@ -56,7 +56,7 @@ extern const char* SUBSYSTEM_CATEGORY;
 
 static const int MAX_SOLVER_ITERATIONS = 256;
 static const int DEFAULT_FPS = 60;
-static const Vector3 DEFAULT_GRAVITY = Vector3(0.0f, -9.81f, 0.0f);
+static const Vector3 DEFAULT_GRAVITY_V3 = Vector3(0.0f, -9.81f, 0.0f);
 
 PhysicsWorldConfig PhysicsWorld::config;
 
@@ -144,7 +144,7 @@ PhysicsWorld::PhysicsWorld(Context* context) :
     solver_ = new btSequentialImpulseConstraintSolver();
     world_ = new btDiscreteDynamicsWorld(collisionDispatcher_.Get(), broadphase_.Get(), solver_.Get(), collisionConfiguration_);
 
-    world_->setGravity(ToBtVector3(DEFAULT_GRAVITY));
+    world_->setGravity(ToBtVector3(DEFAULT_GRAVITY_V3));
     world_->getDispatchInfo().m_useContinuous = true;
     world_->getSolverInfo().m_splitImpulse = false; // Disable by default for performance
     world_->setDebugDrawer(this);
@@ -183,7 +183,7 @@ void PhysicsWorld::RegisterObject(Context* context)
 {
     context->RegisterFactory<PhysicsWorld>(SUBSYSTEM_CATEGORY);
 
-    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Gravity", GetGravity, SetGravity, Vector3, DEFAULT_GRAVITY, AM_DEFAULT);
+    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Gravity", GetGravity, SetGravity, Vector3, DEFAULT_GRAVITY_V3, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Physics FPS", int, fps_, DEFAULT_FPS, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Max Substeps", int, maxSubSteps_, 0, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Solver Iterations", GetNumIterations, SetNumIterations, int, 10, AM_DEFAULT);

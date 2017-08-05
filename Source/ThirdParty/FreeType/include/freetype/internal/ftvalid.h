@@ -128,6 +128,7 @@ FT_BEGIN_HEADER
   /*                                                                   */
   /* Use preprocessor prescan to pass FT_ERR_PREFIX.                   */
   /*                                                                   */
+#undef FT_INVALID
 #define FT_INVALID( _prefix, _error )  FT_INVALID_( _prefix, _error )
 #define FT_INVALID_( _prefix, _error ) \
           ft_validator_error( valid, _prefix ## _error )

@@ -34,14 +34,14 @@ namespace Urho3D
 
 extern const char* NAVIGATION_CATEGORY;
 
-static const float DEFAULT_RADIUS = 1.0f;
+static const float NAV_DEFAULT_RADIUS = 1.0f;
 static const unsigned DEFAULT_MASK_FLAG = 1;
 static const unsigned DEFAULT_AREA = 1;
 
 OffMeshConnection::OffMeshConnection(Context* context) :
     Component(context),
     endPointID_(0),
-    radius_(DEFAULT_RADIUS),
+    radius_(NAV_DEFAULT_RADIUS),
     bidirectional_(true),
     endPointDirty_(false),
     mask_(DEFAULT_MASK_FLAG),
@@ -59,7 +59,7 @@ void OffMeshConnection::RegisterObject(Context* context)
 
     URHO3D_ACCESSOR_ATTRIBUTE("Is Enabled", IsEnabled, SetEnabled, bool, true, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Endpoint NodeID", int, endPointID_, 0, AM_DEFAULT | AM_NODEID);
-    URHO3D_ATTRIBUTE("Radius", float, radius_, DEFAULT_RADIUS, AM_DEFAULT);
+    URHO3D_ATTRIBUTE("Radius", float, radius_, NAV_DEFAULT_RADIUS, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Bidirectional", bool, bidirectional_, true, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Flags Mask", unsigned, mask_, DEFAULT_MASK_FLAG, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Area Type", unsigned, areaId_, DEFAULT_AREA, AM_DEFAULT);

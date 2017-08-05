@@ -383,7 +383,7 @@ static int countPolyVerts(const unsigned short* p, const int nvp)
 	return nvp;
 }
 
-inline bool uleft(const unsigned short* a, const unsigned short* b, const unsigned short* c)
+inline bool rm_uleft(const unsigned short* a, const unsigned short* b, const unsigned short* c)
 {
 	return ((int)b[0] - (int)a[0]) * ((int)c[2] - (int)a[2]) -
 		   ((int)c[0] - (int)a[0]) * ((int)b[2] - (int)a[2]) < 0;
@@ -435,13 +435,13 @@ static int getPolyMergeValue(unsigned short* pa, unsigned short* pb,
 	va = pa[(ea+na-1) % na];
 	vb = pa[ea];
 	vc = pb[(eb+2) % nb];
-	if (!uleft(&verts[va*3], &verts[vb*3], &verts[vc*3]))
+	if (!rm_uleft(&verts[va*3], &verts[vb*3], &verts[vc*3]))
 		return -1;
 	
 	va = pb[(eb+nb-1) % nb];
 	vb = pb[eb];
 	vc = pa[(ea+2) % na];
-	if (!uleft(&verts[va*3], &verts[vb*3], &verts[vc*3]))
+	if (!rm_uleft(&verts[va*3], &verts[vb*3], &verts[vc*3]))
 		return -1;
 	
 	va = pa[ea];

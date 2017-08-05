@@ -10351,3 +10351,8 @@ struct mg_context *mg_start(const struct mg_callbacks *callbacks,
 
 	return ctx;
 }
+
+#undef malloc
+#undef calloc
+#undef realloc
+#undef free

@@ -478,12 +478,12 @@ int cpu_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 	struct cpu_raw_data_t myraw;
 	if (!raw) {
 		if ((r = cpuid_get_raw_data(&myraw)) < 0)
-			return set_error(r);
+			return set_error((cpu_error_t)r);
 		raw = &myraw;
 	}
 	cpu_id_t_constructor(data);
 	if ((r = cpuid_basic_identify(raw, data)) < 0)
-		return set_error(r);
+		return set_error((cpu_error_t)r);
 	switch (data->vendor) {
 		case VENDOR_INTEL:
 			r = cpuid_identify_intel(raw, data);
@@ -494,7 +494,7 @@ int cpu_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 		default:
 			break;
 	}
-	return set_error(r);
+	return set_error((cpu_error_t)r);
 }
 
 const char* cpu_feature_str(cpu_feature_t feature)

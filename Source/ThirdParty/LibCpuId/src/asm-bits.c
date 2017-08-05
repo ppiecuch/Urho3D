@@ -214,7 +214,7 @@ void busy_sse_loop(int cycles)
 		"	xorps	%%xmm6,	%%xmm6\n"
 		"	xorps	%%xmm7,	%%xmm7\n"
 		XALIGN
-		".bsLoop:\n"
+		"1:\n"
 		// 0:
 		"	addps	%%xmm1, %%xmm0\n"
 		"	addps	%%xmm2, %%xmm1\n"
@@ -505,7 +505,7 @@ void busy_sse_loop(int cycles)
 		"	addps	%%xmm0, %%xmm7\n"
 		
 		"	dec	%%eax\n"
-		"	jnz	.bsLoop\n"
+		"	jnz	1b\n"
 		::"a"(cycles)
 	);
 #else

@@ -98,6 +98,11 @@
 #define likely(expr)     expect((expr) != 0, 1)
 #define unlikely(expr)   expect((expr) != 0, 0)
 
+#ifdef LZ4C
+# define LZ4C_RELOAD
+#else
+# define LZ4C
+#endif
 
 /**************************************
 *  Memory routines
@@ -132,6 +137,8 @@
 *  Reading and writing into memory
 **************************************/
 #define STEPSIZE sizeof(size_t)
+
+#ifndef LZ4C_RELOAD
 
 static unsigned LZ4_64bits(void) { return sizeof(void*)==8; }
 
@@ -330,6 +337,8 @@ static unsigned LZ4_count(const BYTE* pIn, const BYTE* pMatch, const BYTE* pInLi
     return (unsigned)(pIn - pStart);
 }
 
+#endif // LZ4C_RELOAD
+
 
 #ifndef LZ4_COMMONDEFS_ONLY
 /**************************************
@@ -355,7 +364,7 @@ typedef struct {
     U32 dictSize;
 } LZ4_stream_t_internal;
 
-typedef enum { notLimited = 0, limitedOutput = 1 } limitedOutput_directive;
+typedef enum { notLimited = 0, noLimit = notLimited, limitedOutput = 1 } limitedOutput_directive;
 typedef enum { byPtr, byU32, byU16 } tableType_t;
 
 typedef enum { noDict = 0, withPrefix64k, usingExtDict } dict_directive;

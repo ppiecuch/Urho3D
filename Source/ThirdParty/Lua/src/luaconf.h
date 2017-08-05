@@ -641,8 +641,6 @@ union luai_Cast { double l_d; long l_l; };
 ** insecure) or if you want the original tmpnam anyway.  By default, Lua
 ** uses tmpnam except when POSIX is available, where it uses mkstemp.
 */
-#if defined(loslib_c) || defined(luaall_c)
-
 #if defined(LUA_USE_MKSTEMP)
 #include <unistd.h>
 #define LUA_TMPNAMBUFSIZE	32
@@ -655,8 +653,6 @@ union luai_Cast { double l_d; long l_l; };
 #else
 #define LUA_TMPNAMBUFSIZE	L_tmpnam
 #define lua_tmpnam(b,e)		{ e = (tmpnam(b) == NULL); }
-#endif
-
 #endif
 
 

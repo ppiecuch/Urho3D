@@ -27,7 +27,9 @@
 #include "../IO/Deserializer.h"
 #include "../IO/Serializer.h"
 
-#ifdef __ANDROID__
+#if defined(QT_CORE_LIB)
+class QFile;
+#elif defined(__ANDROID__)
 struct SDL_RWops;
 #endif
 
@@ -45,7 +47,7 @@ extern const char* APK;
 #else
 #define URHO3D_ASSET(p) p.Substring(5).CString()
 #endif
-#endif
+#endif // __ANDROID__
 
 /// File open mode.
 enum FileMode
@@ -122,7 +124,10 @@ private:
     FileMode mode_;
     /// File handle.
     void* handle_;
-#ifdef __ANDROID__
+#if defined(QT_CORE_LIB)
+    /// QFile context for Qt asset loading.
+    QFile* assetHandle_;
+#elif defined(__ANDROID__)
     /// SDL RWops context for Android asset loading.
     SDL_RWops* assetHandle_;
 #endif

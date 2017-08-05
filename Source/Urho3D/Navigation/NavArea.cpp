@@ -32,8 +32,8 @@ namespace Urho3D
 {
 
 static const unsigned MAX_NAV_AREA_ID = 255;
-static const Vector3 DEFAULT_BOUNDING_BOX_MIN(-10.0f, -10.0f, -10.0f);
-static const Vector3 DEFAULT_BOUNDING_BOX_MAX(10.0f, 10.0f, 10.0f);
+static const Vector3 AREA_DEFAULT_BOUNDING_BOX_MIN(-10.0f, -10.0f, -10.0f);
+static const Vector3 AREA_DEFAULT_BOUNDING_BOX_MAX(10.0f, 10.0f, 10.0f);
 static const unsigned DEFAULT_AREA_ID = 0;
 
 extern const char* NAVIGATION_CATEGORY;
@@ -41,7 +41,7 @@ extern const char* NAVIGATION_CATEGORY;
 NavArea::NavArea(Context* context) :
     Component(context),
     areaID_(DEFAULT_AREA_ID),
-    boundingBox_(DEFAULT_BOUNDING_BOX_MIN, DEFAULT_BOUNDING_BOX_MAX)
+    boundingBox_(AREA_DEFAULT_BOUNDING_BOX_MIN, AREA_DEFAULT_BOUNDING_BOX_MAX)
 {
 }
 
@@ -54,8 +54,8 @@ void NavArea::RegisterObject(Context* context)
     context->RegisterFactory<NavArea>(NAVIGATION_CATEGORY);
 
     URHO3D_COPY_BASE_ATTRIBUTES(Component);
-    URHO3D_ATTRIBUTE("Bounding Box Min", Vector3, boundingBox_.min_, DEFAULT_BOUNDING_BOX_MIN, AM_DEFAULT);
-    URHO3D_ATTRIBUTE("Bounding Box Max", Vector3, boundingBox_.max_, DEFAULT_BOUNDING_BOX_MAX, AM_DEFAULT);
+    URHO3D_ATTRIBUTE("Bounding Box Min", Vector3, boundingBox_.min_, AREA_DEFAULT_BOUNDING_BOX_MIN, AM_DEFAULT);
+    URHO3D_ATTRIBUTE("Bounding Box Max", Vector3, boundingBox_.max_, AREA_DEFAULT_BOUNDING_BOX_MAX, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Area ID", GetAreaID, SetAreaID, unsigned, DEFAULT_AREA_ID, AM_DEFAULT);
 }
 

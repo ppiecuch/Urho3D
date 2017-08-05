@@ -86,7 +86,7 @@ const char* cullModeNames[] =
     0
 };
 
-static const char* fillModeNames[] =
+static const char* matFillModeNames[] =
 {
     "solid",
     "wireframe",
@@ -538,7 +538,7 @@ bool Material::Load(const XMLElement& source)
 
     XMLElement fillElem = source.GetChild("fill");
     if (fillElem)
-        SetFillMode((FillMode)GetStringListIndex(fillElem.GetAttribute("value").CString(), fillModeNames, FILL_SOLID));
+        SetFillMode((FillMode)GetStringListIndex(fillElem.GetAttribute("value").CString(), matFillModeNames, FILL_SOLID));
 
     XMLElement depthBiasElem = source.GetChild("depthbias");
     if (depthBiasElem)
@@ -699,7 +699,7 @@ bool Material::Load(const JSONValue& source)
 
     JSONValue fillVal = source.Get("fill");
     if (!fillVal.IsNull())
-        SetFillMode((FillMode)GetStringListIndex(fillVal.GetString().CString(), fillModeNames, FILL_SOLID));
+        SetFillMode((FillMode)GetStringListIndex(fillVal.GetString().CString(), matFillModeNames, FILL_SOLID));
 
     JSONValue depthBiasVal = source.Get("depthbias");
     if (!depthBiasVal.IsNull())
@@ -807,7 +807,7 @@ bool Material::Save(XMLElement& dest) const
 
     // Write fill mode
     XMLElement fillElem = dest.CreateChild("fill");
-    fillElem.SetString("value", fillModeNames[fillMode_]);
+    fillElem.SetString("value", matFillModeNames[fillMode_]);
 
     // Write depth bias
     XMLElement depthBiasElem = dest.CreateChild("depthbias");
@@ -911,7 +911,7 @@ bool Material::Save(JSONValue& dest) const
     dest.Set("shadowcull", cullModeNames[shadowCullMode_]);
 
     // Write fill mode
-    dest.Set("fill", fillModeNames[fillMode_]);
+    dest.Set("fill", matFillModeNames[fillMode_]);
 
     // Write depth bias
     JSONValue depthBiasValue;

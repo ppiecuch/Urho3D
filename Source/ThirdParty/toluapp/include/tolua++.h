@@ -21,7 +21,7 @@
 
 #define TOLUA_VERSION "tolua++-1.0.93"
 
-#ifdef __cplusplus
+#if defined(__cplusplus) && !defined(URHO3D_IS_UNITY_BUILD)
 extern "C" {
 #endif
 
@@ -178,7 +178,7 @@ TOLUA_API int tolua_fast_isa(lua_State *L, int mt_indexa, int mt_indexb, int sup
 #define tolua_owned
 #endif
 
-#ifdef __cplusplus
+#if defined(__cplusplus) && !defined(URHO3D_IS_UNITY_BUILD)
 }
 #endif
 

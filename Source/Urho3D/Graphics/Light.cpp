@@ -61,7 +61,7 @@ static const float DEFAULT_TEMPERATURE = 6590.0f;
 static const float DEFAULT_RADIUS = 0.0f;
 static const float DEFAULT_LENGTH = 0.0f;
 
-static const char* typeNames[] =
+static const char* lightTypeNames[] =
 {
     "Directional",
     "Spot",
@@ -124,7 +124,7 @@ void Light::RegisterObject(Context* context)
     context->RegisterFactory<Light>(SCENE_CATEGORY);
 
     URHO3D_ACCESSOR_ATTRIBUTE("Is Enabled", IsEnabled, SetEnabled, bool, true, AM_DEFAULT);
-    URHO3D_ENUM_ACCESSOR_ATTRIBUTE("Light Type", GetLightType, SetLightType, LightType, typeNames, DEFAULT_LIGHTTYPE, AM_DEFAULT);
+    URHO3D_ENUM_ACCESSOR_ATTRIBUTE("Light Type", GetLightType, SetLightType, LightType, lightTypeNames, DEFAULT_LIGHTTYPE, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Color", GetColor, SetColor, Color, Color::WHITE, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Specular Intensity", GetSpecularIntensity, SetSpecularIntensity, float, DEFAULT_SPECULARINTENSITY,
         AM_DEFAULT);

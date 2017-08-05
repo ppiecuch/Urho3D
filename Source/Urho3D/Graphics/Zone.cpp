@@ -36,8 +36,8 @@
 namespace Urho3D
 {
 
-static const Vector3 DEFAULT_BOUNDING_BOX_MIN(-10.0f, -10.0f, -10.0f);
-static const Vector3 DEFAULT_BOUNDING_BOX_MAX(10.0f, 10.0f, 10.0f);
+static const Vector3 ZONE_DEFAULT_BOUNDING_BOX_MIN(-10.0f, -10.0f, -10.0f);
+static const Vector3 ZONE_DEFAULT_BOUNDING_BOX_MAX(10.0f, 10.0f, 10.0f);
 static const Color DEFAULT_AMBIENT_COLOR(0.1f, 0.1f, 0.1f);
 static const Color DEFAULT_FOG_COLOR(0.0f, 0.0f, 0.0f);
 static const float DEFAULT_FOG_START = 250.0f;
@@ -61,7 +61,7 @@ Zone::Zone(Context* context) :
     fogHeightScale_(DEFAULT_FOG_HEIGHT_SCALE),
     priority_(0)
 {
-    boundingBox_ = BoundingBox(DEFAULT_BOUNDING_BOX_MIN, DEFAULT_BOUNDING_BOX_MAX);
+    boundingBox_ = BoundingBox(ZONE_DEFAULT_BOUNDING_BOX_MIN, ZONE_DEFAULT_BOUNDING_BOX_MAX);
 }
 
 Zone::~Zone()
@@ -73,8 +73,8 @@ void Zone::RegisterObject(Context* context)
     context->RegisterFactory<Zone>(SCENE_CATEGORY);
 
     URHO3D_ACCESSOR_ATTRIBUTE("Is Enabled", IsEnabled, SetEnabled, bool, true, AM_DEFAULT);
-    URHO3D_ATTRIBUTE("Bounding Box Min", Vector3, boundingBox_.min_, DEFAULT_BOUNDING_BOX_MIN, AM_DEFAULT);
-    URHO3D_ATTRIBUTE("Bounding Box Max", Vector3, boundingBox_.max_, DEFAULT_BOUNDING_BOX_MAX, AM_DEFAULT);
+    URHO3D_ATTRIBUTE("Bounding Box Min", Vector3, boundingBox_.min_, ZONE_DEFAULT_BOUNDING_BOX_MIN, AM_DEFAULT);
+    URHO3D_ATTRIBUTE("Bounding Box Max", Vector3, boundingBox_.max_, ZONE_DEFAULT_BOUNDING_BOX_MAX, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Ambient Color", Color, ambientColor_, DEFAULT_AMBIENT_COLOR, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Fog Color", Color, fogColor_, DEFAULT_FOG_COLOR, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Fog Start", float, fogStart_, DEFAULT_FOG_START, AM_DEFAULT);

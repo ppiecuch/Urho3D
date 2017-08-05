@@ -38,7 +38,7 @@ const VariantMap Variant::emptyVariantMap;
 const VariantVector Variant::emptyVariantVector;
 const StringVector Variant::emptyStringVector;
 
-static const char* typeNames[] =
+static const char* varTypeNames[] =
 {
     "None",
     "Int",
@@ -381,7 +381,7 @@ VectorBuffer Variant::GetVectorBuffer() const
 
 String Variant::GetTypeName() const
 {
-    return typeNames[type_];
+    return varTypeNames[type_];
 }
 
 String Variant::ToString() const
@@ -852,7 +852,7 @@ template <> Matrix4 Variant::Get<Matrix4>() const
 
 String Variant::GetTypeName(VariantType type)
 {
-    return typeNames[type];
+    return varTypeNames[type];
 }
 
 VariantType Variant::GetTypeFromName(const String& typeName)
@@ -862,7 +862,7 @@ VariantType Variant::GetTypeFromName(const String& typeName)
 
 VariantType Variant::GetTypeFromName(const char* typeName)
 {
-    return (VariantType)GetStringListIndex(typeName, typeNames, VAR_NONE);
+    return (VariantType)GetStringListIndex(typeName, varTypeNames, VAR_NONE);
 }
 
 }

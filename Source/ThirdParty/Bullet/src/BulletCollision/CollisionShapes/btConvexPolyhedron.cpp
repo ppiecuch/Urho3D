@@ -31,11 +31,8 @@ btConvexPolyhedron::~btConvexPolyhedron()
 }
 
 
-inline bool IsAlmostZero(const btVector3& v)
-{
-	if(fabsf(v.x())>1e-6 || fabsf(v.y())>1e-6 || fabsf(v.z())>1e-6)	return false;
-	return true;
-}
+#define IsAlmostZero(V) \
+	({const btVector3& v=(V);(fabsf(v.x())>1e-6 || fabsf(v.y())>1e-6 || fabsf(v.z())>1e-6)==false;})
 
 struct btInternalVertexPair
 {

@@ -33,7 +33,7 @@ static bool contains(const dtCompressedTileRef* a, const int n, const dtCompress
 	return false;
 }
 
-inline int computeTileHash(int x, int y, const int mask)
+inline int dtComputeTileHash(int x, int y, const int mask)
 {
 	const unsigned int h1 = 0x8da6b343; // Large multiplicative constants;
 	const unsigned int h2 = 0xd8163841; // here arbitrarily chosen primes
@@ -185,7 +185,7 @@ int dtTileCache::getTilesAt(const int tx, const int ty, dtCompressedTileRef* til
 	int n = 0;
 	
 	// Find tile based on hash.
-	int h = computeTileHash(tx,ty,m_tileLutMask);
+	int h = dtComputeTileHash(tx,ty,m_tileLutMask);
 	dtCompressedTile* tile = m_posLookup[h];
 	while (tile)
 	{
@@ -205,7 +205,7 @@ int dtTileCache::getTilesAt(const int tx, const int ty, dtCompressedTileRef* til
 dtCompressedTile* dtTileCache::getTileAt(const int tx, const int ty, const int tlayer)
 {
 	// Find tile based on hash.
-	int h = computeTileHash(tx,ty,m_tileLutMask);
+	int h = dtComputeTileHash(tx,ty,m_tileLutMask);
 	dtCompressedTile* tile = m_posLookup[h];
 	while (tile)
 	{
@@ -276,7 +276,7 @@ dtStatus dtTileCache::addTile(unsigned char* data, const int dataSize, unsigned 
 		return DT_FAILURE | DT_OUT_OF_MEMORY;
 	
 	// Insert tile into the position lut.
-	int h = computeTileHash(header->tx, header->ty, m_tileLutMask);
+	int h = dtComputeTileHash(header->tx, header->ty, m_tileLutMask);
 	tile->next = m_posLookup[h];
 	m_posLookup[h] = tile;
 	
@@ -308,7 +308,7 @@ dtStatus dtTileCache::removeTile(dtCompressedTileRef ref, unsigned char** data, 
 		return DT_FAILURE | DT_INVALID_PARAM;
 	
 	// Remove tile from hash lookup.
-	const int h = computeTileHash(tile->header->tx,tile->header->ty,m_tileLutMask);
+	const int h = dtComputeTileHash(tile->header->tx,tile->header->ty,m_tileLutMask);
 	dtCompressedTile* prev = 0;
 	dtCompressedTile* cur = m_posLookup[h];
 	while (cur)

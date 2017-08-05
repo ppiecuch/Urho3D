@@ -1602,3 +1602,12 @@ extern int ZEXPORT unzSetOffset (file, pos)
     s->current_file_ok = (err == UNZ_OK);
     return err;
 }
+
+#undef local
+
+#undef UNZ_BUFSIZE
+#undef UNZ_MAXFILENAMEINZIP
+#undef ALLOC
+#undef TRYFREE
+#undef SIZECENTRALDIRITEM
+#undef SIZEZIPLOCALHEADER

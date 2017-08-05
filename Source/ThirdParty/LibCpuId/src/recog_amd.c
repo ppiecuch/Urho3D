@@ -31,6 +31,9 @@
 #include "recog_amd.h"
 #include "libcpuid_util.h"
 
+#define NA      NA_AMD
+#define NO_CODE NO_CODE_AMD
+
 enum _amd_code_t {
 	NA,
 	NO_CODE,
@@ -498,3 +501,6 @@ void cpuid_get_list_amd(struct cpu_list_t* list)
 {
 	generic_get_cpu_list(cpudb_amd, COUNT_OF(cpudb_amd), list);
 }
+
+#undef NA
+#undef NO_CODE

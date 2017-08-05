@@ -29,22 +29,22 @@ static void dtFreeDefault(void *ptr)
 	free(ptr);
 }
 
-static dtAllocFunc* sAllocFunc = dtAllocDefault;
-static dtFreeFunc* sFreeFunc = dtFreeDefault;
+static dtAllocFunc* sDtAllocFunc = dtAllocDefault;
+static dtFreeFunc* sDtFreeFunc = dtFreeDefault;
 
 void dtAllocSetCustom(dtAllocFunc *allocFunc, dtFreeFunc *freeFunc)
 {
-	sAllocFunc = allocFunc ? allocFunc : dtAllocDefault;
-	sFreeFunc = freeFunc ? freeFunc : dtFreeDefault;
+	sDtAllocFunc = allocFunc ? allocFunc : dtAllocDefault;
+	sDtFreeFunc = freeFunc ? freeFunc : dtFreeDefault;
 }
 
 void* dtAlloc(int size, dtAllocHint hint)
 {
-	return sAllocFunc(size, hint);
+	return sDtAllocFunc(size, hint);
 }
 
 void dtFree(void* ptr)
 {
 	if (ptr)
-		sFreeFunc(ptr);
+		sDtFreeFunc(ptr);
 }

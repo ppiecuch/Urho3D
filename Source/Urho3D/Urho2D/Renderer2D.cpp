@@ -90,7 +90,7 @@ void Renderer2D::RegisterObject(Context* context)
     context->RegisterFactory<Renderer2D>();
 }
 
-static inline bool CompareRayQueryResults(RayQueryResult& lr, RayQueryResult& rr)
+static inline bool r2dCompareRayQueryResults(RayQueryResult& lr, RayQueryResult& rr)
 {
     Drawable2D* lhs = static_cast<Drawable2D*>(lr.drawable_);
     Drawable2D* rhs = static_cast<Drawable2D*>(rr.drawable_);
@@ -113,7 +113,7 @@ void Renderer2D::ProcessRayQuery(const RayOctreeQuery& query, PODVector<RayQuery
     }
 
     if (results.Size() != resultSize)
-        Sort(results.Begin() + resultSize, results.End(), CompareRayQueryResults);
+        Sort(results.Begin() + resultSize, results.End(), r2dCompareRayQueryResults);
 }
 
 void Renderer2D::UpdateBatches(const FrameInfo& frame)

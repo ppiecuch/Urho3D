@@ -65,7 +65,7 @@ static const unsigned QUANTIZE_MAX_TRIANGLES = 1000000;
 static const btVector3 WHITE(1.0f, 1.0f, 1.0f);
 static const btVector3 GREEN(0.0f, 1.0f, 0.0f);
 
-static const char* typeNames[] =
+static const char* collTypeNames[] =
 {
     "Box",
     "Sphere",
@@ -422,7 +422,7 @@ void CollisionShape::RegisterObject(Context* context)
     context->RegisterFactory<CollisionShape>(PHYSICS_CATEGORY);
 
     URHO3D_ACCESSOR_ATTRIBUTE("Is Enabled", IsEnabled, SetEnabled, bool, true, AM_DEFAULT);
-    URHO3D_ENUM_ATTRIBUTE("Shape Type", shapeType_, typeNames, SHAPE_BOX, AM_DEFAULT);
+    URHO3D_ENUM_ATTRIBUTE("Shape Type", shapeType_, collTypeNames, SHAPE_BOX, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Size", Vector3, size_, Vector3::ONE, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Offset Position", GetPosition, SetPosition, Vector3, Vector3::ZERO, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Offset Rotation", GetRotation, SetRotation, Quaternion, Quaternion::IDENTITY, AM_DEFAULT);

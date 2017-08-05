@@ -77,6 +77,36 @@ extern "C"
 namespace Urho3D
 {
 
+# ifdef QT_GUI_LIB
+    bool GLEW_VERSION_4_5   = false;
+    bool GLEW_VERSION_4_4   = false;
+    bool GLEW_VERSION_4_3   = false;
+    bool GLEW_VERSION_4_2   = false;
+    bool GLEW_VERSION_4_1   = false;
+    bool GLEW_VERSION_4_0   = false;
+    bool GLEW_VERSION_3_3   = false;
+    bool GLEW_VERSION_3_2   = false;
+    bool GLEW_VERSION_3_1   = false;
+    bool GLEW_VERSION_3_0   = false;
+    bool GLEW_VERSION_2_1   = false;    
+    bool GLEW_VERSION_2_0   = false;
+    bool GLEW_VERSION_1_5   = false;
+    bool GLEW_VERSION_1_4   = false;
+    bool GLEW_VERSION_1_3   = false;
+    bool GLEW_VERSION_1_2_1 = false; 
+    bool GLEW_VERSION_1_2   = false;
+    bool GLEW_VERSION_1_1   = false;
+    
+    bool GLEW_EXT_framebuffer_object = false;
+    bool GLEW_EXT_packed_depth_stencil = false;
+    bool GLEW_ARB_seamless_cube_map = false;
+    bool GLEW_ARB_instanced_arrays = false;
+    bool GLEW_EXT_texture_compression_s3tc = false;
+    bool GLEW_EXT_texture_filter_anisotropic = false;
+    bool GLEW_EXT_texture_sRGB = false;
+    bool GLEW_EXT_framebuffer_sRGB = false;
+    bool GLEW_ARB_texture_multisample = false;
+#endif
 static const unsigned glCmpFunc[] =
 {
     GL_ALWAYS,
@@ -2469,13 +2499,46 @@ void Graphics::Restore()
 
         // Initialize OpenGL extensions library (desktop only)
 #ifndef GL_ES_VERSION_2_0
+# ifdef QT_GUI_LIB
+        const int major = currentContext()->format().majorVersion();
+        const int minor = currentContext()->format().minorVersion();
+        
+        GLEW_VERSION_4_5   = ( major > 4 )              || ( major == 4 && minor >= 5 ) ? true : false;
+        GLEW_VERSION_4_4   = GLEW_VERSION_4_5   == true || ( major == 4 && minor >= 4 ) ? true : false;
+        GLEW_VERSION_4_3   = GLEW_VERSION_4_4   == true || ( major == 4 && minor >= 3 ) ? true : false;
+        GLEW_VERSION_4_2   = GLEW_VERSION_4_3   == true || ( major == 4 && minor >= 2 ) ? true : false;
+        GLEW_VERSION_4_1   = GLEW_VERSION_4_2   == true || ( major == 4 && minor >= 1 ) ? true : false;
+        GLEW_VERSION_4_0   = GLEW_VERSION_4_1   == true || ( major == 4               ) ? true : false;
+        GLEW_VERSION_3_3   = GLEW_VERSION_4_0   == true || ( major == 3 && minor >= 3 ) ? true : false;
+        GLEW_VERSION_3_2   = GLEW_VERSION_3_3   == true || ( major == 3 && minor >= 2 ) ? true : false;
+        GLEW_VERSION_3_1   = GLEW_VERSION_3_2   == true || ( major == 3 && minor >= 1 ) ? true : false;
+        GLEW_VERSION_3_0   = GLEW_VERSION_3_1   == true || ( major == 3               ) ? true : false;
+        GLEW_VERSION_2_1   = GLEW_VERSION_3_0   == true || ( major == 2 && minor >= 1 ) ? true : false;    
+        GLEW_VERSION_2_0   = GLEW_VERSION_2_1   == true || ( major == 2               ) ? true : false;
+        GLEW_VERSION_1_5   = GLEW_VERSION_2_0   == true || ( major == 1 && minor >= 5 ) ? true : false;
+        GLEW_VERSION_1_4   = GLEW_VERSION_1_5   == true || ( major == 1 && minor >= 4 ) ? true : false;
+        GLEW_VERSION_1_3   = GLEW_VERSION_1_4   == true || ( major == 1 && minor >= 3 ) ? true : false;
+        GLEW_VERSION_1_2_1 = GLEW_VERSION_1_3   == true                                 ? true : false; 
+        GLEW_VERSION_1_2   = GLEW_VERSION_1_2_1 == true || ( major == 1 && minor >= 2 ) ? true : false;
+        GLEW_VERSION_1_1   = GLEW_VERSION_1_2   == true || ( major == 1 && minor >= 1 ) ? true : false;
+        
+        GLEW_EXT_framebuffer_object = searchExtension("GL_EXT_framebuffer_object");
+        GLEW_EXT_packed_depth_stencil = searchExtension("GL_EXT_packed_depth_stencil");
+        GLEW_ARB_seamless_cube_map = searchExtension("GL_ARB_seamless_cube_map");
+        GLEW_ARB_instanced_arrays = searchExtension("GL_ARB_instanced_arrays");
+        GLEW_EXT_texture_compression_s3tc = searchExtension("GL_EXT_texture_compression_s3tc");
+        GLEW_EXT_texture_filter_anisotropic = searchExtension("GL_EXT_texture_filter_anisotropic");
+        GLEW_EXT_texture_sRGB = searchExtension("GL_EXT_texture_sRGB");
+        GLEW_EXT_framebuffer_sRGB = searchExtension("GL_EXT_framebuffer_sRGB");
+        GLEW_ARB_texture_multisample =  searchExtension("GL_ARB_texture_multisample");
+# else
         GLenum err = glewInit();
         if (GLEW_OK != err)
         {
             URHO3D_LOGERRORF("Could not initialize OpenGL extensions, root cause: '%s'", glewGetErrorString(err));
             return;
         }
-
+# endif
         if (!forceGL2_ && GLEW_VERSION_3_2)
         {
             gl3Support = true;

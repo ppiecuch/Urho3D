@@ -30,11 +30,15 @@
 #include "../Core/ProcessUtils.h"
 #include "../IO/Serializer.h"
 
+#ifndef URHO3D_IS_UNITY_BUILD
 extern "C"
 {
+#endif
 #include <lua.h>
 #include <lauxlib.h>
+#ifndef URHO3D_IS_UNITY_BUILD
 }
+#endif
 
 #include "../DebugNew.h"
 

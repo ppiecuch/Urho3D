@@ -4991,19 +4991,19 @@ stb_vorbis * stb_vorbis_open_memory(const unsigned char *data, int len, int *err
 #define PLAYBACK_LEFT     2
 #define PLAYBACK_RIGHT    4
 
-#define L  (PLAYBACK_LEFT  | PLAYBACK_MONO)
-#define C  (PLAYBACK_LEFT  | PLAYBACK_RIGHT | PLAYBACK_MONO)
-#define R  (PLAYBACK_RIGHT | PLAYBACK_MONO)
+#define VL  (PLAYBACK_LEFT  | PLAYBACK_MONO)
+#define VC  (PLAYBACK_LEFT  | PLAYBACK_RIGHT | PLAYBACK_MONO)
+#define VR  (PLAYBACK_RIGHT | PLAYBACK_MONO)
 
 static int8 channel_position[7][6] =
 {
    { 0 },
-   { C },
-   { L, R },
-   { L, C, R },
-   { L, R, L, R },
-   { L, C, R, L, R },
-   { L, C, R, L, R, C },
+   { VC },
+   { VL, VR },
+   { VL, VC, VR },
+   { VL, VR, VL, VR },
+   { VL, VC, VR, VL, VR },
+   { VL, VC, VR, VL, VR, VC },
 };
 
 

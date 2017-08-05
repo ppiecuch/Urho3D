@@ -37,7 +37,7 @@
 /*
 ** Make sure we can call this stuff from C++.
 */
-#ifdef __cplusplus
+#if defined(__cplusplus) && !defined(URHO3D_IS_UNITY_BUILD)
 extern "C" {
 #endif
 
@@ -8201,7 +8201,7 @@ SQLITE_API SQLITE_EXPERIMENTAL int SQLITE_STDCALL sqlite3_snapshot_cmp(
 # undef double
 #endif
 
-#ifdef __cplusplus
+#if defined(__cplusplus) && !defined(URHO3D_IS_UNITY_BUILD)
 }  /* End of the 'extern "C"' block */
 #endif
 #endif /* _SQLITE3_H_ */

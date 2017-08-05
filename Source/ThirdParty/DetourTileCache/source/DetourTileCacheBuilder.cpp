@@ -532,7 +532,7 @@ static bool walkContour(dtTileCacheLayer& layer, int x, int y, dtTempContour& co
 }	
 
 
-static float distancePtSeg(const int x, const int z,
+static float distPtSeg(const int x, const int z,
 						   const int px, const int pz,
 						   const int qx, const int qz)
 {
@@ -639,7 +639,7 @@ static void simplifyContour(dtTempContour& cont, const float maxError)
 		// Tessellate only outer edges or edges between areas.
 		while (ci != endi)
 		{
-			float d = distancePtSeg(cont.verts[ci*4+0], cont.verts[ci*4+2], ax, az, bx, bz);
+			float d = distPtSeg(cont.verts[ci*4+0], cont.verts[ci*4+2], ax, az, bx, bz);
 			if (d > maxd)
 			{
 				maxd = d;
@@ -870,7 +870,7 @@ static unsigned short addVertex(unsigned short x, unsigned short y, unsigned sho
 }
 
 
-struct rcEdge
+struct dtEdge
 {
 	unsigned short vert[2];
 	unsigned short polyEdge[2];
@@ -892,7 +892,7 @@ static bool buildMeshAdjacency(dtTileCacheAlloc* alloc,
 	unsigned short* nextEdge = firstEdge + nverts;
 	int edgeCount = 0;
 	
-	dtFixedArray<rcEdge> edges(alloc, maxEdgeCount);
+	dtFixedArray<dtEdge> edges(alloc, maxEdgeCount);
 	if (!edges)
 		return false;
 	
@@ -909,7 +909,7 @@ static bool buildMeshAdjacency(dtTileCacheAlloc* alloc,
 			unsigned short v1 = (j+1 >= MAX_VERTS_PER_POLY || t[j+1] == DT_TILECACHE_NULL_IDX) ? t[0] : t[j+1];
 			if (v0 < v1)
 			{
-				rcEdge& edge = edges[edgeCount];
+				dtEdge& edge = edges[edgeCount];
 				edge.vert[0] = v0;
 				edge.vert[1] = v1;
 				edge.poly[0] = (unsigned short)i;
@@ -937,7 +937,7 @@ static bool buildMeshAdjacency(dtTileCacheAlloc* alloc,
 				bool found = false;
 				for (unsigned short e = firstEdge[v1]; e != DT_TILECACHE_NULL_IDX; e = nextEdge[e])
 				{
-					rcEdge& edge = edges[e];
+					dtEdge& edge = edges[e];
 					if (edge.vert[1] == v0 && edge.poly[0] == edge.poly[1])
 					{
 						edge.poly[1] = (unsigned short)i;
@@ -949,7 +949,7 @@ static bool buildMeshAdjacency(dtTileCacheAlloc* alloc,
 				if (!found)
 				{
 					// Matching edge not found, it is an open edge, add it.
-					rcEdge& edge = edges[edgeCount];
+					dtEdge& edge = edges[edgeCount];
 					edge.vert[0] = v1;
 					edge.vert[1] = v0;
 					edge.poly[0] = (unsigned short)i;
@@ -991,7 +991,7 @@ static bool buildMeshAdjacency(dtTileCacheAlloc* alloc,
 				
 				for (int m = 0; m < edgeCount; ++m)
 				{
-					rcEdge& e = edges[m];
+					dtEdge& e = edges[m];
 					// Skip connected edges.
 					if (e.poly[0] != e.poly[1])
 						continue;
@@ -1021,7 +1021,7 @@ static bool buildMeshAdjacency(dtTileCacheAlloc* alloc,
 					dtSwap(xmin, xmax);
 				for (int m = 0; m < edgeCount; ++m)
 				{
-					rcEdge& e = edges[m];
+					dtEdge& e = edges[m];
 					// Skip connected edges.
 					if (e.poly[0] != e.poly[1])
 						continue;
@@ -1048,7 +1048,7 @@ static bool buildMeshAdjacency(dtTileCacheAlloc* alloc,
 	// Store adjacency
 	for (int i = 0; i < edgeCount; ++i)
 	{
-		const rcEdge& e = edges[i];
+		const dtEdge& e = edges[i];
 		if (e.poly[0] != e.poly[1])
 		{
 			unsigned short* p0 = &polys[e.poly[0]*MAX_VERTS_PER_POLY*2];
@@ -1068,8 +1068,8 @@ static bool buildMeshAdjacency(dtTileCacheAlloc* alloc,
 }
 
 
-inline int prev(int i, int n) { return i-1 >= 0 ? i-1 : n-1; }
-inline int next(int i, int n) { return i+1 < n ? i+1 : 0; }
+inline int dt_prev(int i, int n) { return i-1 >= 0 ? i-1 : n-1; }
+inline int dt_next(int i, int n) { return i+1 < n ? i+1 : 0; }
 
 inline int area2(const unsigned char* a, const unsigned char* b, const unsigned char* c)
 {
@@ -1080,7 +1080,7 @@ inline int area2(const unsigned char* a, const unsigned char* b, const unsigned 
 //	The arguments are negated to ensure that they are 0/1
 //	values.  Then the bitwise Xor operator may apply.
 //	(This idea is due to Michael Baldwin.)
-inline bool xorb(bool x, bool y)
+inline bool dt_xorb(bool x, bool y)
 {
 	return !x ^ !y;
 }
@@ -1113,7 +1113,7 @@ static bool intersectProp(const unsigned char* a, const unsigned char* b,
 		collinear(c,d,a) || collinear(c,d,b))
 		return false;
 	
-	return xorb(left(a,b,c), left(a,b,d)) && xorb(left(c,d,a), left(c,d,b));
+	return dt_xorb(left(a,b,c), left(a,b,d)) && dt_xorb(left(c,d,a), left(c,d,b));
 }
 
 // Returns T iff (a,b,c) are collinear and point c lies 
@@ -1157,7 +1157,7 @@ static bool diagonalie(int i, int j, int n, const unsigned char* verts, const un
 	// For each edge (k,k+1) of P
 	for (int k = 0; k < n; k++)
 	{
-		int k1 = next(k, n);
+		int k1 = dt_next(k, n);
 		// Skip edges incident to i or j
 		if (!((k == i) || (k1 == i) || (k == j) || (k1 == j)))
 		{
@@ -1180,8 +1180,8 @@ static bool	inCone(int i, int j, int n, const unsigned char* verts, const unsign
 {
 	const unsigned char* pi = &verts[(indices[i] & 0x7fff) * 4];
 	const unsigned char* pj = &verts[(indices[j] & 0x7fff) * 4];
-	const unsigned char* pi1 = &verts[(indices[next(i, n)] & 0x7fff) * 4];
-	const unsigned char* pin1 = &verts[(indices[prev(i, n)] & 0x7fff) * 4];
+	const unsigned char* pi1 = &verts[(indices[dt_next(i, n)] & 0x7fff) * 4];
+	const unsigned char* pin1 = &verts[(indices[dt_prev(i, n)] & 0x7fff) * 4];
 	
 	// If P[i] is a convex vertex [ i+1 left or on (i-1,i) ].
 	if (leftOn(pin1, pi, pi1))
@@ -1206,8 +1206,8 @@ static int triangulate(int n, const unsigned char* verts, unsigned short* indice
 	// The last bit of the index is used to indicate if the vertex can be removed.
 	for (int i = 0; i < n; i++)
 	{
-		int i1 = next(i, n);
-		int i2 = next(i1, n);
+		int i1 = dt_next(i, n);
+		int i2 = dt_next(i1, n);
 		if (diagonal(i, i2, n, verts, indices))
 			indices[i1] |= 0x8000;
 	}
@@ -1218,11 +1218,11 @@ static int triangulate(int n, const unsigned char* verts, unsigned short* indice
 		int mini = -1;
 		for (int i = 0; i < n; i++)
 		{
-			int i1 = next(i, n);
+			int i1 = dt_next(i, n);
 			if (indices[i1] & 0x8000)
 			{
 				const unsigned char* p0 = &verts[(indices[i] & 0x7fff) * 4];
-				const unsigned char* p2 = &verts[(indices[next(i1, n)] & 0x7fff) * 4];
+				const unsigned char* p2 = &verts[(indices[dt_next(i1, n)] & 0x7fff) * 4];
 				
 				const int dx = (int)p2[0] - (int)p0[0];
 				const int dz = (int)p2[2] - (int)p0[2];
@@ -1248,8 +1248,8 @@ static int triangulate(int n, const unsigned char* verts, unsigned short* indice
 		}
 		
 		int i = mini;
-		int i1 = next(i, n);
-		int i2 = next(i1, n);
+		int i1 = dt_next(i, n);
+		int i2 = dt_next(i1, n);
 		
 		*dst++ = indices[i] & 0x7fff;
 		*dst++ = indices[i1] & 0x7fff;
@@ -1262,14 +1262,14 @@ static int triangulate(int n, const unsigned char* verts, unsigned short* indice
 			indices[k] = indices[k+1];
 		
 		if (i1 >= n) i1 = 0;
-		i = prev(i1,n);
+		i = dt_prev(i1,n);
 		// Update diagonal flags.
-		if (diagonal(prev(i, n), i1, n, verts, indices))
+		if (diagonal(dt_prev(i, n), i1, n, verts, indices))
 			indices[i] |= 0x8000;
 		else
 			indices[i] &= 0x7fff;
 		
-		if (diagonal(i, next(i1, n), n, verts, indices))
+		if (diagonal(i, dt_next(i1, n), n, verts, indices))
 			indices[i1] |= 0x8000;
 		else
 			indices[i1] &= 0x7fff;
@@ -1293,11 +1293,12 @@ static int countPolyVerts(const unsigned short* p)
 	return MAX_VERTS_PER_POLY;
 }
 
-inline bool uleft(const unsigned short* a, const unsigned short* b, const unsigned short* c)
+inline bool dt_uleft(const unsigned short* a, const unsigned short* b, const unsigned short* c)
 {
 	return ((int)b[0] - (int)a[0]) * ((int)c[2] - (int)a[2]) -
-	((int)c[0] - (int)a[0]) * ((int)b[2] - (int)a[2]) < 0;
+		   ((int)c[0] - (int)a[0]) * ((int)b[2] - (int)a[2]) < 0;
 }
+#define uleft dt_uleft
 
 static int getPolyMergeValue(unsigned short* pa, unsigned short* pb,
 							 const unsigned short* verts, int& ea, int& eb)
@@ -2149,3 +2150,4 @@ bool dtTileCacheHeaderSwapEndian(unsigned char* data, const int dataSize)
 	return true;
 }
 
+#undef uleft

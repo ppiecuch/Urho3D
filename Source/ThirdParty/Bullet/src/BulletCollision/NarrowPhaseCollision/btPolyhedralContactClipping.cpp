@@ -114,11 +114,8 @@ static bool TestSepAxis(const btConvexPolyhedron& hullA, const btConvexPolyhedro
 
 static int gActualSATPairTests=0;
 
-inline bool IsAlmostZero(const btVector3& v)
-{
-	if(fabsf(v.x())>1e-6 || fabsf(v.y())>1e-6 || fabsf(v.z())>1e-6)	return false;
-	return true;
-}
+#define IsAlmostZero(v) \
+	((fabsf(v.x())>1e-6 || fabsf(v.y())>1e-6 || fabsf(v.z())>1e-6)==false)
 
 #ifdef TEST_INTERNAL_OBJECTS
 

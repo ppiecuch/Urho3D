@@ -37,10 +37,14 @@
 #include "../Resource/ResourceCache.h"
 #include "../Scene/Scene.h"
 
+#ifndef URHO3D_IS_UNITY_BUILD
 extern "C"
 {
+#endif
 #include <lualib.h>
+#ifndef URHO3D_IS_UNITY_BUILD
 }
+#endif
 
 #include <toluapp/tolua++.h>
 #include "../LuaScript/ToluaUtils.h"

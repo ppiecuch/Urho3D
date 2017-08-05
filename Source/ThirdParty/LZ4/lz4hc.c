@@ -279,8 +279,9 @@ FORCE_INLINE int LZ4HC_InsertAndGetWiderMatch (
     return longest;
 }
 
-
-typedef enum { noLimit = 0, limitedOutput = 1 } limitedOutput_directive;
+#ifndef LZ4C_RELOAD
+typedef enum { noLimit = 0, limitOutput = 1 } limitedOutput_directive;
+#endif
 
 #define LZ4HC_DEBUG 0
 #if LZ4HC_DEBUG
