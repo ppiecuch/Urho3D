@@ -1075,6 +1075,7 @@ void Define(const Vector3&);
 void Define(const Vector3&, const Vector3&);
 void Define(float, float);
 bool Defined() const;
+float DistanceToPoint(const Vector3&) const;
 Intersection IsInside(const BoundingBox&) const;
 Intersection IsInside(const Sphere&) const;
 Intersection IsInside(const Vector3&) const;
@@ -4872,9 +4873,12 @@ class DynamicNavigationMesh
 {
 public:
 // Methods:
+bool AddTile(const VectorBuffer&) const;
+bool Allocate(const BoundingBox&, uint);
 void ApplyAttributes();
 bool Build();
 bool Build(const BoundingBox&);
+bool Build(const IntVector2&, const IntVector2&);
 void DrawDebugGeometry(DebugRenderer, bool);
 void DrawDebugGeometry(bool);
 Vector3 FindNearestPoint(const Vector3&, const Vector3& = Vector3 ( 1.0 , 1.0 , 1.0 ));
@@ -4890,8 +4894,12 @@ float GetDistanceToWall(const Vector3&, float, const Vector3& = Vector3 ( 1.0 , 
 bool GetInterceptNetworkUpdate(const String&) const;
 Vector3 GetRandomPoint();
 Vector3 GetRandomPointInCircle(const Vector3&, float, const Vector3& = Vector3 ( 1.0 , 1.0 , 1.0 ));
+BoundingBox GetTileBoudningBox(const IntVector2&) const;
+VectorBuffer GetTileData(const IntVector2&) const;
+IntVector2 GetTileIndex(const Vector3&) const;
 bool HasSubscribedToEvent(Object, const String&);
 bool HasSubscribedToEvent(const String&);
+bool HasTile(const IntVector2&) const;
 bool Load(File, bool = false);
 bool Load(VectorBuffer&, bool = false);
 bool LoadJSON(const JSONValue&, bool = false);
@@ -4900,9 +4908,11 @@ void MarkNetworkUpdate() const;
 Vector3 MoveAlongSurface(const Vector3&, const Vector3&, const Vector3& = Vector3 ( 1.0 , 1.0 , 1.0 ), int = 3);
 Vector3 Raycast(const Vector3&, const Vector3&, const Vector3& = Vector3 ( 1.0 , 1.0 , 1.0 ));
 void Remove();
+void RemoveAllTiles();
 void RemoveAttributeAnimation(const String&);
 void RemoveInstanceDefault();
 void RemoveObjectAnimation();
+void RemoveTile(const IntVector2&);
 void ResetToDefault();
 bool Save(File) const;
 bool Save(VectorBuffer&) const;
@@ -5512,74 +5522,6 @@ String verb;
 int weakRefs;
 };
 
-class IKConstraint
-{
-public:
-// Methods:
-void ApplyAttributes();
-void DrawDebugGeometry(DebugRenderer, bool);
-Variant GetAttribute(const String&) const;
-ValueAnimation GetAttributeAnimation(const String&) const;
-float GetAttributeAnimationSpeed(const String&) const;
-float GetAttributeAnimationTime(const String&) const;
-WrapMode GetAttributeAnimationWrapMode(const String&) const;
-Variant GetAttributeDefault(const String&) const;
-bool GetInterceptNetworkUpdate(const String&) const;
-bool HasSubscribedToEvent(Object, const String&);
-bool HasSubscribedToEvent(const String&);
-bool Load(File, bool = false);
-bool Load(VectorBuffer&, bool = false);
-bool LoadJSON(const JSONValue&, bool = false);
-bool LoadXML(const XMLElement&, bool = false);
-void MarkNetworkUpdate() const;
-void Remove();
-void RemoveAttributeAnimation(const String&);
-void RemoveInstanceDefault();
-void RemoveObjectAnimation();
-void ResetToDefault();
-bool Save(File) const;
-bool Save(VectorBuffer&) const;
-bool SaveJSON(JSONValue&) const;
-bool SaveXML(XMLElement&) const;
-void SendEvent(const String&, VariantMap& = VariantMap ( ));
-void SetAnimationTime(float);
-bool SetAttribute(const String&, const Variant&);
-void SetAttributeAnimation(const String&, ValueAnimation, WrapMode = WM_LOOP, float = 1.0f);
-void SetAttributeAnimationSpeed(const String&, float);
-void SetAttributeAnimationTime(const String&, float);
-void SetAttributeAnimationWrapMode(const String&, WrapMode);
-void SetInterceptNetworkUpdate(const String&, bool);
-
-// Properties:
-bool animationEnabled;
-/* readonly */
-Array<Variant> attributeDefaults;
-/* readonly */
-Array<AttributeInfo> attributeInfos;
-Array<Variant> attributes;
-/* readonly */
-String category;
-bool enabled;
-/* readonly */
-bool enabledEffective;
-/* readonly */
-uint id;
-/* readonly */
-Node node;
-/* readonly */
-uint numAttributes;
-ObjectAnimation objectAnimation;
-/* readonly */
-int refs;
-bool temporary;
-/* readonly */
-StringHash type;
-/* readonly */
-String typeName;
-/* readonly */
-int weakRefs;
-};
-
 class IKEffector
 {
 public:
@@ -5655,7 +5597,6 @@ String typeName;
 /* readonly */
 int weakRefs;
 float weight;
-bool weightedNlerp;
 };
 
 class IKSolver
@@ -5677,7 +5618,6 @@ float GetAttributeAnimationSpeed(const String&) const;
 float GetAttributeAnimationTime(const String&) const;
 WrapMode GetAttributeAnimationWrapMode(const String&) const;
 Variant GetAttributeDefault(const String&) const;
-bool GetFeature(IKFeature) const;
 bool GetInterceptNetworkUpdate(const String&) const;
 bool HasSubscribedToEvent(Object, const String&);
 bool HasSubscribedToEvent(const String&);
@@ -5686,7 +5626,7 @@ bool Load(VectorBuffer&, bool = false);
 bool LoadJSON(const JSONValue&, bool = false);
 bool LoadXML(const XMLElement&, bool = false);
 void MarkNetworkUpdate() const;
-void RebuildData();
+void RebuildChainTrees();
 void RecalculateSegmentLengths();
 void Remove();
 void RemoveAttributeAnimation(const String&);
@@ -5704,11 +5644,17 @@ void SetAttributeAnimation(const String&, ValueAnimation, WrapMode = WM_LOOP, fl
 void SetAttributeAnimationSpeed(const String&, float);
 void SetAttributeAnimationTime(const String&, float);
 void SetAttributeAnimationWrapMode(const String&, WrapMode);
-void SetFeature(IKFeature, bool);
 void SetInterceptNetworkUpdate(const String&, bool);
 void Solve();
 
 // Properties:
+bool AUTO_SOLVE;
+bool CONSTRAINTS;
+bool JOINT_ROTATIONS;
+bool TARGET_ROTATIONS;
+bool UPDATE_ACTIVE_POSE;
+bool UPDATE_ORIGINAL_POSE;
+bool USE_ORIGINAL_POSE;
 IKAlgorithm algorithm;
 bool animationEnabled;
 /* readonly */
@@ -7608,9 +7554,12 @@ class NavigationMesh
 {
 public:
 // Methods:
+bool AddTile(const VectorBuffer&) const;
+bool Allocate(const BoundingBox&, uint);
 void ApplyAttributes();
 bool Build();
 bool Build(const BoundingBox&);
+bool Build(const IntVector2&, const IntVector2&);
 void DrawDebugGeometry(DebugRenderer, bool);
 void DrawDebugGeometry(bool);
 Vector3 FindNearestPoint(const Vector3&, const Vector3& = Vector3 ( 1.0 , 1.0 , 1.0 ));
@@ -7626,8 +7575,12 @@ float GetDistanceToWall(const Vector3&, float, const Vector3& = Vector3 ( 1.0 , 
 bool GetInterceptNetworkUpdate(const String&) const;
 Vector3 GetRandomPoint();
 Vector3 GetRandomPointInCircle(const Vector3&, float, const Vector3& = Vector3 ( 1.0 , 1.0 , 1.0 ));
+BoundingBox GetTileBoudningBox(const IntVector2&) const;
+VectorBuffer GetTileData(const IntVector2&) const;
+IntVector2 GetTileIndex(const Vector3&) const;
 bool HasSubscribedToEvent(Object, const String&);
 bool HasSubscribedToEvent(const String&);
+bool HasTile(const IntVector2&) const;
 bool Load(File, bool = false);
 bool Load(VectorBuffer&, bool = false);
 bool LoadJSON(const JSONValue&, bool = false);
@@ -7636,9 +7589,11 @@ void MarkNetworkUpdate() const;
 Vector3 MoveAlongSurface(const Vector3&, const Vector3&, const Vector3& = Vector3 ( 1.0 , 1.0 , 1.0 ), int = 3);
 Vector3 Raycast(const Vector3&, const Vector3&, const Vector3& = Vector3 ( 1.0 , 1.0 , 1.0 ));
 void Remove();
+void RemoveAllTiles();
 void RemoveAttributeAnimation(const String&);
 void RemoveInstanceDefault();
 void RemoveObjectAnimation();
+void RemoveTile(const IntVector2&);
 void ResetToDefault();
 bool Save(File) const;
 bool Save(VectorBuffer&) const;
@@ -15622,17 +15577,6 @@ TWO_BONE,
 FABRIK,
 };
 
-enum IKFeature
-{
-JOINT_ROTATIONS,
-TARGET_ROTATIONS,
-UPDATE_ORIGINAL_POSE,
-UPDATE_ACTIVE_POSE,
-USE_ORIGINAL_POSE,
-CONSTRAINTS,
-AUTO_SOLVE,
-};
-
 enum InterpMethod
 {
 IM_NONE,
@@ -16074,6 +16018,7 @@ bool IsPowerOfTwo(uint);
 String Join(Array<String>&, const String&);
 float Lerp(float, float, float);
 float Ln(float);
+uint LogBaseTwo(uint);
 void MarkNetworkUpdate();
 float Max(float, float);
 int Max(int, int);

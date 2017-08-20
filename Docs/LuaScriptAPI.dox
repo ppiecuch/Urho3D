@@ -745,6 +745,7 @@ Methods:
 - BoundingBox Transformed(const Matrix3& transform) const
 - BoundingBox Transformed(const Matrix3x4& transform) const
 - Rect Projected(const Matrix4& projection) const
+- float DistanceToPoint(const Vector3& point) const
 - Intersection IsInside(const Vector3& point) const
 - Intersection IsInside(const BoundingBox& box) const
 - Intersection IsInsideFast(const BoundingBox& box) const
@@ -2768,8 +2769,6 @@ Methods:
 - void SetRotationWeight(float weight)
 - float GetRotationDecay() const
 - void SetRotationDecay(float decay)
-- bool WeightedNlerpEnabled() const
-- void EnableWeightedNlerp(bool enable)
 
 Properties:
 
@@ -2781,15 +2780,15 @@ Properties:
 - float weight
 - float rotationWeight
 - float rotationDecay
+- bool WEIGHT_NLERP
+- bool INHERIT_PARENT_ROTATION
 
 <a name="Class_IKSolver"></a>
 ### IKSolver : Component
 
 Methods:
 
-- bool GetFeature(IKSolver::Feature feature) const
-- void SetFeature(IKSolver::Feature feature, bool enable)
-- void RebuildData()
+- void RebuildChainTrees()
 - void RecalculateSegmentLengths()
 - void CalculateJointRotations()
 - void Solve()
@@ -2805,6 +2804,13 @@ Properties:
 - IKSolver::Algorithm algorithm
 - unsigned maximumIterations
 - float tolerance
+- bool JOINT_ROTATIONS
+- bool TARGET_ROTATIONS
+- bool UPDATE_ORIGINAL_POSE
+- bool UPDATE_ACTIVE_POSE
+- bool USE_ORIGINAL_POSE
+- bool CONSTRAINTS
+- bool AUTO_SOLVE
 
 <a name="Class_Image"></a>
 ### Image : Resource
@@ -3912,8 +3918,17 @@ Methods:
 - void SetDetailSampleMaxError(float error)
 - void SetPadding(const Vector3& padding)
 - void SetAreaCost(unsigned areaID, float cost)
+- bool Allocate(const BoundingBox& boundingBox, unsigned maxTiles)
 - bool Build()
 - bool Build(const BoundingBox& boundingBox)
+- bool Build(const IntVector2& from, const IntVector2& to)
+- VectorBuffer GetTileData(const IntVector2& tile) const
+- bool AddTile(const VectorBuffer& tileData)
+- void RemoveTile(const IntVector2& tile)
+- void RemoveAllTiles()
+- bool HasTile(const IntVector2& tile) const
+- BoundingBox GetTileBoudningBox(const IntVector2& tile) const
+- IntVector2 GetTileIndex(const Vector3& position) const
 - void SetPartitionType(NavmeshPartitionType aType)
 - void SetDrawOffMeshConnections(bool enable)
 - void SetDrawNavAreas(bool enable)
@@ -8189,6 +8204,11 @@ Properties:
 
 ### Feature
 
+- int WEIGHT_NLERP
+- int INHERIT_PARENT_ROTATION
+
+### Feature
+
 - int JOINT_ROTATIONS
 - int TARGET_ROTATIONS
 - int UPDATE_ORIGINAL_POSE
@@ -8707,8 +8727,8 @@ Properties:
 - Time* GetTime()
 - long GetTotalMemory()
 - UI* GetUI()
-- bool HasSubscribedToEvent(Object* sender, const String eventName)
 - bool HasSubscribedToEvent(const String eventName)
+- bool HasSubscribedToEvent(Object* sender, const String eventName)
 - float InverseLerp(float lhs, float rhs, float x)
 - bool IsAbsolutePath(const String pathName)
 - bool IsAlpha(unsigned ch)
@@ -8717,6 +8737,7 @@ Properties:
 - bool IsPowerOfTwo(unsigned value)
 - float Lerp(float lhs, float rhs, float t)
 - float Ln(float x)
+- unsigned LogBaseTwo(unsigned value)
 - float Max(float lhs, float rhs)
 - int MaxInt(int lhs, int rhs)
 - float Min(float lhs, float rhs)
@@ -8731,8 +8752,8 @@ Properties:
 - float Random(float min, float max)
 - float Random()
 - float Random(float range)
-- int RandomInt(int min, int max)
 - int RandomInt(int range)
+- int RandomInt(int min, int max)
 - float RandomNormal(float meanValue, float variance)
 - void RegisterEventName(const String eventName)
 - String RemoveTrailingSlash(const String pathName)
@@ -8749,9 +8770,9 @@ Properties:
 - float Sin(float angle)
 - float SmoothStep(float lhs, float rhs, float t)
 - float Sqrt(float x)
-- float StableRandom(float seed)
-- float StableRandom(const Vector2& seed)
 - float StableRandom(const Vector3& seed)
+- float StableRandom(const Vector2& seed)
+- float StableRandom(float seed)
 - void SubscribeToEvent(void* sender, const String eventName, void* functionOrFunctionName)
 - void SubscribeToEvent(const String eventName, void* functionOrFunctionName)
 - float Tan(float angle)
@@ -8782,31 +8803,31 @@ Properties:
 - void UnsubscribeFromEvent(Object* sender, const String eventName)
 - void UnsubscribeFromEvent(const String eventName)
 - void UnsubscribeFromEvents(Object* sender)
+- Vector2 VectorCeil(const Vector2& vec)
 - Vector4 VectorCeil(const Vector4& vec)
 - Vector3 VectorCeil(const Vector3& vec)
-- Vector2 VectorCeil(const Vector2& vec)
-- IntVector3 VectorCeilToInt(const Vector3& vec)
 - IntVector2 VectorCeilToInt(const Vector2& vec)
-- Vector4 VectorFloor(const Vector4& vec)
+- IntVector3 VectorCeilToInt(const Vector3& vec)
 - Vector3 VectorFloor(const Vector3& vec)
 - Vector2 VectorFloor(const Vector2& vec)
+- Vector4 VectorFloor(const Vector4& vec)
 - IntVector2 VectorFloorToInt(const Vector2& vec)
 - IntVector3 VectorFloorToInt(const Vector3& vec)
 - Vector2 VectorLerp(const Vector2& lhs, const Vector2& rhs, const Vector2& t)
-- Vector3 VectorLerp(const Vector3& lhs, const Vector3& rhs, const Vector3& t)
 - Vector4 VectorLerp(const Vector4& lhs, const Vector4& rhs, const Vector4& t)
+- Vector3 VectorLerp(const Vector3& lhs, const Vector3& rhs, const Vector3& t)
 - Vector3 VectorMax(const Vector3& lhs, const Vector3& rhs)
-- IntVector3 VectorMax(const IntVector3& lhs, const IntVector3& rhs)
-- Vector2 VectorMax(const Vector2& lhs, const Vector2& rhs)
 - Vector4 VectorMax(const Vector4& lhs, const Vector4& rhs)
 - IntVector2 VectorMax(const IntVector2& lhs, const IntVector2& rhs)
-- Vector4 VectorMin(const Vector4& lhs, const Vector4& rhs)
+- IntVector3 VectorMax(const IntVector3& lhs, const IntVector3& rhs)
+- Vector2 VectorMax(const Vector2& lhs, const Vector2& rhs)
 - Vector3 VectorMin(const Vector3& lhs, const Vector3& rhs)
-- Vector2 VectorMin(const Vector2& lhs, const Vector2& rhs)
 - IntVector3 VectorMin(const IntVector3& lhs, const IntVector3& rhs)
+- Vector2 VectorMin(const Vector2& lhs, const Vector2& rhs)
+- Vector4 VectorMin(const Vector4& lhs, const Vector4& rhs)
 - IntVector2 VectorMin(const IntVector2& lhs, const IntVector2& rhs)
-- Vector4 VectorRound(const Vector4& vec)
 - Vector2 VectorRound(const Vector2& vec)
+- Vector4 VectorRound(const Vector4& vec)
 - Vector3 VectorRound(const Vector3& vec)
 - IntVector3 VectorRoundToInt(const Vector3& vec)
 - IntVector2 VectorRoundToInt(const Vector2& vec)
