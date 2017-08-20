@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2008-2016 the Urho3D project.
+// Copyright (c) 2008-2017 the Urho3D project.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -31,7 +31,7 @@
 
 #if defined(QT_GUI_LIB) || defined(QT_OPENGL_LIB)
 #include <qgl/gl.h>
-#elif defined(IOS)
+#elif defined(IOS) || defined(TVOS)
 #include <OpenGLES/ES2/gl.h>
 #include <OpenGLES/ES2/glext.h>
 #elif defined(__ANDROID__) || defined (__arm__) || defined(__aarch64__) || defined (__EMSCRIPTEN__)
@@ -116,7 +116,7 @@ public:
 private:
     /// SDL OpenGL context.
     SDL_GLContext context_;
-    /// IOS system framebuffer handle.
+    /// iOS/tvOS system framebuffer handle.
     unsigned systemFBO_;
     /// Active texture unit.
     unsigned activeTexture_;

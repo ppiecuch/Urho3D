@@ -21,6 +21,7 @@ subject to the following restrictions:
 #include "btConvexPolyhedron.h"
 #include "LinearMath/btHashMap.h"
 
+
 btConvexPolyhedron::btConvexPolyhedron()
 {
 
@@ -32,7 +33,7 @@ btConvexPolyhedron::~btConvexPolyhedron()
 
 
 #define IsAlmostZero(V) \
-	({const btVector3& v=(V);(fabsf(v.x())>1e-6 || fabsf(v.y())>1e-6 || fabsf(v.z())>1e-6)==false;})
+	({const btVector3& v=(V);(btFabs(v.x())>1e-6 || btFabs(v.y())>1e-6 || btFabs(v.z())>1e-6)==false;})
 
 struct btInternalVertexPair
 {

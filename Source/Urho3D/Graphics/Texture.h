@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2008-2016 the Urho3D project.
+// Copyright (c) 2008-2017 the Urho3D project.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -36,7 +36,7 @@ class XMLElement;
 class XMLFile;
 
 /// Base class for texture resources.
-class URHO3D_API Texture : public Resource, public GPUObject
+class URHO3D_API Texture : public ResourceWithMetadata, public GPUObject
 {
 public:
     /// Construct.
@@ -82,7 +82,7 @@ public:
     /// Return height.
     int GetHeight() const { return height_; }
 
-    /// Return height.
+    /// Return depth.
     int GetDepth() const { return depth_; }
 
     /// Return filtering mode.
@@ -114,7 +114,7 @@ public:
 
     /// Return whether rendertarget mipmap levels need regenration.
     bool GetLevelsDirty() const { return levelsDirty_; }
-    
+
     /// Return backup texture.
     Texture* GetBackupTexture() const { return backupTexture_; }
 

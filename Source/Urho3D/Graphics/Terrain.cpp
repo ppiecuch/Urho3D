@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2008-2016 the Urho3D project.
+// Copyright (c) 2008-2017 the Urho3D project.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -649,6 +649,21 @@ IntVector2 Terrain::WorldToHeightMap(const Vector3& worldPosition) const
     return IntVector2(xPos, numVertices_.y_ - 1 - zPos);
 }
 
+Vector3 Terrain::HeightMapToWorld(const IntVector2& pixelPosition) const
+{
+    if (!node_)
+        return Vector3::ZERO;
+
+    IntVector2 pos(pixelPosition.x_, numVertices_.y_ - 1 - pixelPosition.y_);
+    float xPos = (float)(pos.x_ * spacing_.x_ + patchWorldOrigin_.x_);
+    float zPos = (float)(pos.y_ * spacing_.z_ + patchWorldOrigin_.y_);
+    Vector3 lPos(xPos, 0.0f, zPos);
+    Vector3 wPos = node_->GetWorldTransform() * lPos;
+    wPos.y_ = GetHeight(wPos);
+
+    return wPos;
+}
+
 void Terrain::CreatePatchGeometry(TerrainPatch* patch)
 {
     URHO3D_PROFILE(CreatePatchGeometry);
@@ -724,7 +739,7 @@ void Terrain::CreatePatchGeometry(TerrainPatch* patch)
                 *vertexData++ = normal.z_;
 
                 // Texture coordinate
-                Vector2 texCoord((float)xPos / (float)numVertices_.x_, 1.0f - (float)zPos / (float)numVertices_.y_);
+                Vector2 texCoord((float)xPos / (float)(numVertices_.x_ - 1), 1.0f - (float)zPos / (float)(numVertices_.y_ - 1));
                 *vertexData++ = texCoord.x_;
                 *vertexData++ = texCoord.y_;
 

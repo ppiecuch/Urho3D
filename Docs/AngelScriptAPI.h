@@ -7,11 +7,21 @@
 #define uint16 unsigned short
 #define uint64 unsigned long
 #define null 0
+#define in
+#define out
+#define inout
+#define is ==
+#define interface struct
+#define class struct
+#define cast reinterpret_cast
+#define mixin
+#define funcdef
 
 // Classes
 
 class Animatable
 {
+public:
 // Methods:
 void ApplyAttributes();
 Variant GetAttribute(const String&) const;
@@ -70,6 +80,7 @@ int weakRefs;
 
 class AnimatedModel
 {
+public:
 // Methods:
 AnimationState AddAnimationState(Animation);
 void ApplyAttributes();
@@ -189,6 +200,7 @@ uint zoneMask;
 
 class AnimatedSprite2D
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -296,18 +308,25 @@ uint zoneMask;
 
 class Animation
 {
+public:
+Animation();
+Animation(const String&in);
 // Methods:
+void AddMetadata(const String&, const Variant&);
 void AddTrigger(const AnimationTriggerPoint&);
 void AddTrigger(float, bool, const Variant&);
 Animation Clone(const String& = String ( )) const;
 AnimationTrack CreateTrack(const String&);
+AnimationTrack GetTrack(uint);
 bool HasSubscribedToEvent(Object, const String&);
 bool HasSubscribedToEvent(const String&);
 bool Load(File);
 bool Load(VectorBuffer&);
 bool Load(const String&);
+void RemoveAllMetadata();
 bool RemoveAllTracks();
 void RemoveAllTriggers();
+void RemoveMetadata(const String&);
 bool RemoveTrack(const String&);
 void RemoveTrigger(uint);
 bool Save(File) const;
@@ -319,9 +338,12 @@ void SendEvent(const String&, VariantMap& = VariantMap ( ));
 String animationName;
 /* readonly */
 String category;
+/* readonly */
+bool hasMetadata;
 float length;
 /* readonly */
 uint memoryUse;
+Array<Variant> metadata;
 String name;
 /* readonly */
 uint numTracks;
@@ -343,6 +365,7 @@ int weakRefs;
 
 class AnimationControl
 {
+public:
 
 // Properties:
 float autoFadeTime;
@@ -356,6 +379,7 @@ float targetWeight;
 
 class AnimationController
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -462,6 +486,10 @@ int weakRefs;
 
 class AnimationKeyFrame
 {
+public:
+~AnimationKeyFrame();
+AnimationKeyFrame();
+AnimationKeyFrame(const AnimationKeyFrame&in);
 
 // Properties:
 Vector3 position;
@@ -472,6 +500,9 @@ float time;
 
 class AnimationSet2D
 {
+public:
+AnimationSet2D();
+AnimationSet2D(const String&in);
 // Methods:
 String GetAnimation(uint) const;
 bool HasSubscribedToEvent(Object, const String&);
@@ -506,6 +537,8 @@ int weakRefs;
 
 class AnimationState
 {
+public:
+AnimationState(Node&, Animation&);
 // Methods:
 void AddTime(float);
 void AddWeight(float);
@@ -544,6 +577,7 @@ float weight;
 
 class AnimationTrack
 {
+public:
 // Methods:
 void AddKeyFrame(const AnimationKeyFrame&);
 void InsertKeyFrame(uint, const AnimationKeyFrame&);
@@ -561,14 +595,23 @@ uint numKeyFrames;
 
 class AnimationTriggerPoint
 {
+public:
+~AnimationTriggerPoint();
+AnimationTriggerPoint();
+AnimationTriggerPoint(const AnimationTriggerPoint&in);
 
 // Properties:
 Variant data;
 float time;
 };
 
-template <class T> class Array
+template <class T>
+class Array
 {
+public:
+Array(int&in);
+Array(int&in, uint);
+Array(int&in, uint, const T&in);
 // Methods:
 void Clear();
 void Erase(uint);
@@ -595,6 +638,10 @@ uint length;
 
 class AttributeInfo
 {
+public:
+~AttributeInfo();
+AttributeInfo();
+AttributeInfo(const AttributeInfo&in);
 
 // Properties:
 Variant defaultValue;
@@ -603,10 +650,13 @@ Array<String> enumNames;
 uint mode;
 String name;
 VariantType type;
+/* readonly */
+Array<String> variantStructureElementNames;
 };
 
 class Audio
 {
+public:
 // Methods:
 bool HasMasterGain(const String&) const;
 bool HasSubscribedToEvent(Object, const String&);
@@ -649,6 +699,10 @@ int weakRefs;
 
 class BiasParameters
 {
+public:
+BiasParameters();
+BiasParameters(const BiasParameters&in);
+BiasParameters(float, float, float normalOffset = 0.0f);
 
 // Properties:
 float constantBias;
@@ -658,6 +712,7 @@ float slopeScaledBias;
 
 class Billboard
 {
+public:
 
 // Properties:
 Color color;
@@ -671,6 +726,7 @@ Rect uv;
 
 class BillboardSet
 {
+public:
 // Methods:
 void ApplyAttributes();
 void Commit();
@@ -770,6 +826,7 @@ uint zoneMask;
 
 class Bone
 {
+public:
 
 // Properties:
 bool animated;
@@ -784,6 +841,9 @@ float radius;
 
 class BorderImage
 {
+public:
+BorderImage();
+BorderImage(const String&in);
 // Methods:
 void AddChild(UIElement);
 void AddTag(const String&);
@@ -995,6 +1055,15 @@ int width;
 
 class BoundingBox
 {
+public:
+BoundingBox();
+BoundingBox(const BoundingBox&in);
+BoundingBox(const Rect&in);
+BoundingBox(const Vector3&in, const Vector3&in);
+BoundingBox(float, float);
+BoundingBox(const Frustum&in);
+BoundingBox(const Polyhedron&in);
+BoundingBox(const Sphere&in);
 // Methods:
 void Clear();
 void Clip(const BoundingBox&);
@@ -1036,6 +1105,9 @@ Vector3 size;
 
 class Button
 {
+public:
+Button();
+Button(const String&in);
 // Methods:
 void AddChild(UIElement);
 void AddTag(const String&);
@@ -1256,6 +1328,7 @@ int width;
 
 class Camera
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -1360,6 +1433,10 @@ float zoom;
 
 class CascadeParameters
 {
+public:
+CascadeParameters();
+CascadeParameters(const CascadeParameters&in);
+CascadeParameters(float, float, float, float, float, float biasAutoAdjust = 1.0);
 
 // Properties:
 float biasAutoAdjust;
@@ -1372,6 +1449,9 @@ float split4;
 
 class CheckBox
 {
+public:
+CheckBox();
+CheckBox(const String&in);
 // Methods:
 void AddChild(UIElement);
 void AddTag(const String&);
@@ -1586,6 +1666,7 @@ int width;
 
 class CollisionBox2D
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -1671,6 +1752,7 @@ int weakRefs;
 
 class CollisionChain2D
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -1757,6 +1839,7 @@ int weakRefs;
 
 class CollisionCircle2D
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -1840,6 +1923,7 @@ int weakRefs;
 
 class CollisionEdge2D
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -1923,6 +2007,7 @@ int weakRefs;
 
 class CollisionPolygon2D
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -2008,6 +2093,7 @@ int weakRefs;
 
 class CollisionShape
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -2096,6 +2182,7 @@ BoundingBox worldBoundingBox;
 
 class CollisionShape2D
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -2176,6 +2263,12 @@ int weakRefs;
 
 class Color
 {
+public:
+Color();
+Color(const Color&in);
+Color(float, float, float, float);
+Color(float, float, float);
+Color(float[]&inout);
 // Methods:
 Color Abs() const;
 float Average() const;
@@ -2216,6 +2309,7 @@ Vector4 rgba;
 
 class ColorFrame
 {
+public:
 
 // Properties:
 Color color;
@@ -2224,6 +2318,7 @@ float time;
 
 class Component
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -2291,6 +2386,7 @@ int weakRefs;
 
 class Connection
 {
+public:
 // Methods:
 void Disconnect(int = 0);
 bool HasSubscribedToEvent(Object, const String&);
@@ -2354,10 +2450,13 @@ int weakRefs;
 
 class Console
 {
+public:
 // Methods:
+void AddAutoComplete(const String&);
 void CopySelectedRows() const;
 bool HasSubscribedToEvent(Object, const String&);
 bool HasSubscribedToEvent(const String&);
+void RemoveAutoComplete(const String&);
 void SendEvent(const String&, VariantMap& = VariantMap ( ));
 void Toggle();
 void UpdateElements();
@@ -2395,6 +2494,7 @@ int weakRefs;
 
 class Constraint
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -2480,6 +2580,7 @@ Vector3 worldPosition;
 
 class Constraint2D
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -2551,6 +2652,7 @@ int weakRefs;
 
 class ConstraintDistance2D
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -2603,6 +2705,7 @@ bool enabledEffective;
 float frequencyHz;
 /* readonly */
 uint id;
+float length;
 /* readonly */
 Node node;
 /* readonly */
@@ -2626,6 +2729,7 @@ int weakRefs;
 
 class ConstraintFriction2D
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -2700,6 +2804,7 @@ int weakRefs;
 
 class ConstraintGear2D
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -2774,6 +2879,7 @@ int weakRefs;
 
 class ConstraintMotor2D
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -2850,6 +2956,7 @@ int weakRefs;
 
 class ConstraintMouse2D
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -2925,6 +3032,7 @@ int weakRefs;
 
 class ConstraintPrismatic2D
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -3004,6 +3112,7 @@ int weakRefs;
 
 class ConstraintPulley2D
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -3080,6 +3189,7 @@ int weakRefs;
 
 class ConstraintRevolute2D
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -3158,6 +3268,7 @@ int weakRefs;
 
 class ConstraintRope2D
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -3232,6 +3343,7 @@ int weakRefs;
 
 class ConstraintWeld2D
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -3306,6 +3418,7 @@ int weakRefs;
 
 class ConstraintWheel2D
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -3384,6 +3497,10 @@ int weakRefs;
 
 class Controls
 {
+public:
+~Controls();
+Controls();
+Controls(const Controls&in);
 // Methods:
 bool IsDown(uint) const;
 bool IsPressed(uint, const Controls&) const;
@@ -3399,6 +3516,7 @@ float yaw;
 
 class CrowdAgent
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -3497,6 +3615,7 @@ int weakRefs;
 
 class CrowdManager
 {
+public:
 // Methods:
 void ApplyAttributes();
 const CrowdObstacleAvoidanceParams& GetObstacleAvoidanceParams(uint);
@@ -3592,6 +3711,7 @@ int weakRefs;
 
 class CrowdObstacleAvoidanceParams
 {
+public:
 
 // Properties:
 uint8 adaptiveDepth;
@@ -3608,6 +3728,9 @@ float weightToi;
 
 class Cursor
 {
+public:
+Cursor();
+Cursor(const String&in);
 // Methods:
 void AddChild(UIElement);
 void AddTag(const String&);
@@ -3825,6 +3948,7 @@ int width;
 
 class CustomGeometry
 {
+public:
 // Methods:
 void ApplyAttributes();
 void BeginGeometry(uint, PrimitiveType);
@@ -3929,6 +4053,7 @@ uint zoneMask;
 
 class CustomGeometryVertex
 {
+public:
 
 // Properties:
 uint color;
@@ -3940,6 +4065,7 @@ Vector2 texCoord;
 
 class Database
 {
+public:
 // Methods:
 DbConnection Connect(const String&);
 void Disconnect(DbConnection);
@@ -3965,6 +4091,7 @@ int weakRefs;
 
 class DbConnection
 {
+public:
 // Methods:
 DbResult Execute(const String&, bool = false);
 bool HasSubscribedToEvent(Object, const String&);
@@ -3990,6 +4117,10 @@ int weakRefs;
 
 class DbResult
 {
+public:
+~DbResult();
+DbResult();
+DbResult(const DbResult&in);
 
 // Properties:
 /* readonly */
@@ -4006,6 +4137,7 @@ Array<Array<Variant>> row;
 
 class DebugHud
 {
+public:
 // Methods:
 void ClearAppStats();
 bool HasSubscribedToEvent(Object, const String&);
@@ -4046,6 +4178,7 @@ int weakRefs;
 
 class DebugRenderer
 {
+public:
 // Methods:
 void AddBoundingBox(const BoundingBox&, const Color&, bool = true, bool = false);
 void AddCircle(const Vector3&, const Vector3&, float, const Color&, int = 64, bool = true);
@@ -4058,6 +4191,7 @@ void AddPolyhedron(const Polyhedron&, const Color&, bool = true);
 void AddQuad(const Vector3&, float, float, const Color&, bool = true);
 void AddSkeleton(Skeleton, const Color&, bool = true);
 void AddSphere(const Sphere&, const Color&, bool = true);
+void AddSphereSector(const Sphere&, const Quaternion&, float, bool, const Color&, bool = true);
 void AddTriangle(const Vector3&, const Vector3&, const Vector3&, const Color&, bool = true);
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -4126,6 +4260,7 @@ int weakRefs;
 
 class DecalSet
 {
+public:
 // Methods:
 bool AddDecal(Drawable, const Vector3&, const Quaternion&, float, float, float, const Vector2&, const Vector2&, float = 0.0, float = 0.1, uint = 0xffffffff);
 void ApplyAttributes();
@@ -4226,6 +4361,7 @@ uint zoneMask;
 
 class Deserializer
 {
+public:
 // Methods:
 Array<uint8> Read(uint);
 bool ReadBool();
@@ -4262,6 +4398,8 @@ Vector3 ReadVector3();
 Vector4 ReadVector4();
 VectorBuffer ReadVectorBuffer(uint);
 uint Seek(uint);
+uint SeekRelative(int);
+uint Tell() const;
 
 // Properties:
 /* readonly */
@@ -4278,6 +4416,8 @@ uint size;
 
 class Dictionary
 {
+public:
+Dictionary();
 // Methods:
 void Clear();
 void Erase(const String&);
@@ -4300,10 +4440,14 @@ uint length;
 
 class DictionaryValue
 {
+public:
+~DictionaryValue();
+DictionaryValue();
 };
 
 class Drawable
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -4389,6 +4533,7 @@ uint zoneMask;
 
 class Drawable2D
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -4476,6 +4621,9 @@ uint zoneMask;
 
 class DropDownList
 {
+public:
+DropDownList();
+DropDownList(const String&in);
 // Methods:
 void AddChild(UIElement);
 void AddItem(UIElement);
@@ -4722,6 +4870,7 @@ int width;
 
 class DynamicNavigationMesh
 {
+public:
 // Methods:
 void ApplyAttributes();
 bool Build();
@@ -4829,6 +4978,7 @@ BoundingBox worldBoundingBox;
 
 class Engine
 {
+public:
 // Methods:
 Console CreateConsole();
 DebugHud CreateDebugHud();
@@ -4868,6 +5018,9 @@ int weakRefs;
 
 class File
 {
+public:
+File();
+File(const String&in, FileMode mode = FILE_READ);
 // Methods:
 void Close();
 bool HasSubscribedToEvent(Object, const String&);
@@ -4908,7 +5061,9 @@ Vector3 ReadVector3();
 Vector4 ReadVector4();
 VectorBuffer ReadVectorBuffer(uint);
 uint Seek(uint);
+uint SeekRelative(int);
 void SendEvent(const String&, VariantMap& = VariantMap ( ));
+uint Tell() const;
 uint Write(Array<uint8>);
 bool WriteBool(bool);
 bool WriteBoundingBox(const BoundingBox&);
@@ -4975,6 +5130,8 @@ int weakRefs;
 
 class FileSelector
 {
+public:
+FileSelector();
 // Methods:
 bool HasSubscribedToEvent(Object, const String&);
 bool HasSubscribedToEvent(const String&);
@@ -5023,6 +5180,7 @@ Window window;
 
 class FileSystem
 {
+public:
 // Methods:
 bool Copy(const String&, const String&);
 bool CreateDir(const String&);
@@ -5064,6 +5222,10 @@ int weakRefs;
 
 class FocusParameters
 {
+public:
+FocusParameters();
+FocusParameters(const FocusParameters&in);
+FocusParameters(bool, bool, bool, float, float);
 
 // Properties:
 bool autoSize;
@@ -5075,8 +5237,11 @@ float quantize;
 
 class Font
 {
+public:
+Font();
+Font(const String&in);
 // Methods:
-IntVector2 GetTotalGlyphOffset(int) const;
+IntVector2 GetTotalGlyphOffset(float) const;
 bool HasSubscribedToEvent(Object, const String&);
 bool HasSubscribedToEvent(const String&);
 bool Load(File);
@@ -5095,6 +5260,8 @@ IntVector2 absoluteGlyphOffset;
 /* readonly */
 String category;
 /* readonly */
+FontType fontType;
+/* readonly */
 uint memoryUse;
 String name;
 /* readonly */
@@ -5112,6 +5279,10 @@ int weakRefs;
 
 class Frustum
 {
+public:
+~Frustum();
+Frustum();
+Frustum(const Frustum&in);
 // Methods:
 void Define(const BoundingBox&, const Matrix3x4&);
 void Define(const Matrix4&);
@@ -5137,6 +5308,8 @@ Array<Vector3> vertices;
 
 class Geometry
 {
+public:
+Geometry();
 // Methods:
 bool HasSubscribedToEvent(Object, const String&);
 bool HasSubscribedToEvent(const String&);
@@ -5178,6 +5351,7 @@ int weakRefs;
 
 class Graphics
 {
+public:
 // Methods:
 void BeginDumpShaders(const String&);
 void Close();
@@ -5190,7 +5364,7 @@ void PrecacheShaders(File);
 void PrecacheShaders(VectorBuffer&);
 void SendEvent(const String&, VariantMap& = VariantMap ( ));
 bool SetMode(int, int);
-bool SetMode(int, int, bool, bool, bool, bool, bool, bool, int);
+bool SetMode(int, int, bool, bool, bool, bool, bool, bool, int, int, int);
 void SetWindowPosition(int, int);
 bool TakeScreenShot(Image);
 bool ToggleFullscreen();
@@ -5205,7 +5379,7 @@ String category;
 /* readonly */
 bool deferredSupport;
 /* readonly */
-IntVector2 desktopResolution;
+Array<IntVector2> desktopResolution;
 /* readonly */
 bool deviceLost;
 bool dither;
@@ -5223,6 +5397,8 @@ bool instancingSupport;
 /* readonly */
 bool lightPrepassSupport;
 /* readonly */
+int monitorCount;
+/* readonly */
 int multiSample;
 /* readonly */
 Array<int> multiSampleLevels;
@@ -5238,13 +5414,15 @@ int refs;
 /* readonly */
 bool resizable;
 /* readonly */
-Array<IntVector2> resolutions;
+Array<Array<IntVector3>> resolutions;
 bool sRGB;
 /* readonly */
 bool sRGBSupport;
 /* readonly */
 bool sRGBWriteSupport;
 String shaderCacheDir;
+/* readonly */
+IntVector2 size;
 /* readonly */
 bool tripleBuffer;
 /* readonly */
@@ -5265,6 +5443,7 @@ String windowTitle;
 
 class HttpRequest
 {
+public:
 // Methods:
 Array<uint8> Read(uint);
 bool ReadBool();
@@ -5301,6 +5480,8 @@ Vector3 ReadVector3();
 Vector4 ReadVector4();
 VectorBuffer ReadVectorBuffer(uint);
 uint Seek(uint);
+uint SeekRelative(int);
+uint Tell() const;
 
 // Properties:
 /* readonly */
@@ -5331,8 +5512,240 @@ String verb;
 int weakRefs;
 };
 
+class IKConstraint
+{
+public:
+// Methods:
+void ApplyAttributes();
+void DrawDebugGeometry(DebugRenderer, bool);
+Variant GetAttribute(const String&) const;
+ValueAnimation GetAttributeAnimation(const String&) const;
+float GetAttributeAnimationSpeed(const String&) const;
+float GetAttributeAnimationTime(const String&) const;
+WrapMode GetAttributeAnimationWrapMode(const String&) const;
+Variant GetAttributeDefault(const String&) const;
+bool GetInterceptNetworkUpdate(const String&) const;
+bool HasSubscribedToEvent(Object, const String&);
+bool HasSubscribedToEvent(const String&);
+bool Load(File, bool = false);
+bool Load(VectorBuffer&, bool = false);
+bool LoadJSON(const JSONValue&, bool = false);
+bool LoadXML(const XMLElement&, bool = false);
+void MarkNetworkUpdate() const;
+void Remove();
+void RemoveAttributeAnimation(const String&);
+void RemoveInstanceDefault();
+void RemoveObjectAnimation();
+void ResetToDefault();
+bool Save(File) const;
+bool Save(VectorBuffer&) const;
+bool SaveJSON(JSONValue&) const;
+bool SaveXML(XMLElement&) const;
+void SendEvent(const String&, VariantMap& = VariantMap ( ));
+void SetAnimationTime(float);
+bool SetAttribute(const String&, const Variant&);
+void SetAttributeAnimation(const String&, ValueAnimation, WrapMode = WM_LOOP, float = 1.0f);
+void SetAttributeAnimationSpeed(const String&, float);
+void SetAttributeAnimationTime(const String&, float);
+void SetAttributeAnimationWrapMode(const String&, WrapMode);
+void SetInterceptNetworkUpdate(const String&, bool);
+
+// Properties:
+bool animationEnabled;
+/* readonly */
+Array<Variant> attributeDefaults;
+/* readonly */
+Array<AttributeInfo> attributeInfos;
+Array<Variant> attributes;
+/* readonly */
+String category;
+bool enabled;
+/* readonly */
+bool enabledEffective;
+/* readonly */
+uint id;
+/* readonly */
+Node node;
+/* readonly */
+uint numAttributes;
+ObjectAnimation objectAnimation;
+/* readonly */
+int refs;
+bool temporary;
+/* readonly */
+StringHash type;
+/* readonly */
+String typeName;
+/* readonly */
+int weakRefs;
+};
+
+class IKEffector
+{
+public:
+// Methods:
+void ApplyAttributes();
+void DrawDebugGeometry(DebugRenderer, bool);
+void DrawDebugGeometry(bool);
+Variant GetAttribute(const String&) const;
+ValueAnimation GetAttributeAnimation(const String&) const;
+float GetAttributeAnimationSpeed(const String&) const;
+float GetAttributeAnimationTime(const String&) const;
+WrapMode GetAttributeAnimationWrapMode(const String&) const;
+Variant GetAttributeDefault(const String&) const;
+bool GetInterceptNetworkUpdate(const String&) const;
+bool HasSubscribedToEvent(Object, const String&);
+bool HasSubscribedToEvent(const String&);
+bool Load(File, bool = false);
+bool Load(VectorBuffer&, bool = false);
+bool LoadJSON(const JSONValue&, bool = false);
+bool LoadXML(const XMLElement&, bool = false);
+void MarkNetworkUpdate() const;
+void Remove();
+void RemoveAttributeAnimation(const String&);
+void RemoveInstanceDefault();
+void RemoveObjectAnimation();
+void ResetToDefault();
+bool Save(File) const;
+bool Save(VectorBuffer&) const;
+bool SaveJSON(JSONValue&) const;
+bool SaveXML(XMLElement&) const;
+void SendEvent(const String&, VariantMap& = VariantMap ( ));
+void SetAnimationTime(float);
+bool SetAttribute(const String&, const Variant&);
+void SetAttributeAnimation(const String&, ValueAnimation, WrapMode = WM_LOOP, float = 1.0f);
+void SetAttributeAnimationSpeed(const String&, float);
+void SetAttributeAnimationTime(const String&, float);
+void SetAttributeAnimationWrapMode(const String&, WrapMode);
+void SetInterceptNetworkUpdate(const String&, bool);
+
+// Properties:
+bool animationEnabled;
+/* readonly */
+Array<Variant> attributeDefaults;
+/* readonly */
+Array<AttributeInfo> attributeInfos;
+Array<Variant> attributes;
+/* readonly */
+String category;
+uint chainLength;
+bool enabled;
+/* readonly */
+bool enabledEffective;
+/* readonly */
+uint id;
+/* readonly */
+Node node;
+/* readonly */
+uint numAttributes;
+ObjectAnimation objectAnimation;
+/* readonly */
+int refs;
+float rotationDecay;
+float rotationWeight;
+String targetName;
+Node targetNode;
+Vector3 targetPosition;
+Quaternion targetRotation;
+bool temporary;
+/* readonly */
+StringHash type;
+/* readonly */
+String typeName;
+/* readonly */
+int weakRefs;
+float weight;
+bool weightedNlerp;
+};
+
+class IKSolver
+{
+public:
+// Methods:
+void ApplyActivePoseToScene();
+void ApplyAttributes();
+void ApplyOriginalPoseToActivePose();
+void ApplyOriginalPoseToScene();
+void ApplySceneToActivePose();
+void ApplySceneToInitialPose();
+void CalculateJointRotations();
+void DrawDebugGeometry(DebugRenderer, bool);
+void DrawDebugGeometry(bool);
+Variant GetAttribute(const String&) const;
+ValueAnimation GetAttributeAnimation(const String&) const;
+float GetAttributeAnimationSpeed(const String&) const;
+float GetAttributeAnimationTime(const String&) const;
+WrapMode GetAttributeAnimationWrapMode(const String&) const;
+Variant GetAttributeDefault(const String&) const;
+bool GetFeature(IKFeature) const;
+bool GetInterceptNetworkUpdate(const String&) const;
+bool HasSubscribedToEvent(Object, const String&);
+bool HasSubscribedToEvent(const String&);
+bool Load(File, bool = false);
+bool Load(VectorBuffer&, bool = false);
+bool LoadJSON(const JSONValue&, bool = false);
+bool LoadXML(const XMLElement&, bool = false);
+void MarkNetworkUpdate() const;
+void RebuildData();
+void RecalculateSegmentLengths();
+void Remove();
+void RemoveAttributeAnimation(const String&);
+void RemoveInstanceDefault();
+void RemoveObjectAnimation();
+void ResetToDefault();
+bool Save(File) const;
+bool Save(VectorBuffer&) const;
+bool SaveJSON(JSONValue&) const;
+bool SaveXML(XMLElement&) const;
+void SendEvent(const String&, VariantMap& = VariantMap ( ));
+void SetAnimationTime(float);
+bool SetAttribute(const String&, const Variant&);
+void SetAttributeAnimation(const String&, ValueAnimation, WrapMode = WM_LOOP, float = 1.0f);
+void SetAttributeAnimationSpeed(const String&, float);
+void SetAttributeAnimationTime(const String&, float);
+void SetAttributeAnimationWrapMode(const String&, WrapMode);
+void SetFeature(IKFeature, bool);
+void SetInterceptNetworkUpdate(const String&, bool);
+void Solve();
+
+// Properties:
+IKAlgorithm algorithm;
+bool animationEnabled;
+/* readonly */
+Array<Variant> attributeDefaults;
+/* readonly */
+Array<AttributeInfo> attributeInfos;
+Array<Variant> attributes;
+/* readonly */
+String category;
+bool enabled;
+/* readonly */
+bool enabledEffective;
+/* readonly */
+uint id;
+uint maximumIterations;
+/* readonly */
+Node node;
+/* readonly */
+uint numAttributes;
+ObjectAnimation objectAnimation;
+/* readonly */
+int refs;
+bool temporary;
+float tolerance;
+/* readonly */
+StringHash type;
+/* readonly */
+String typeName;
+/* readonly */
+int weakRefs;
+};
+
 class Image
 {
+public:
+Image();
+Image(const String&in);
 // Methods:
 void Clear(const Color&);
 void ClearInt(uint);
@@ -5361,6 +5774,7 @@ bool SaveDDS(const String&) const;
 bool SaveJPG(const String&, int) const;
 bool SavePNG(const String&) const;
 bool SaveTGA(const String&) const;
+bool SaveWEBP(const String&, float = 0.0f) const;
 void SendEvent(const String&, VariantMap& = VariantMap ( ));
 void SetPixel(int, int, const Color&);
 void SetPixel(int, int, int, const Color&);
@@ -5409,6 +5823,8 @@ int width;
 
 class IndexBuffer
 {
+public:
+IndexBuffer();
 // Methods:
 VectorBuffer GetData();
 bool HasSubscribedToEvent(Object, const String&);
@@ -5440,6 +5856,7 @@ int weakRefs;
 
 class Input
 {
+public:
 // Methods:
 int AddScreenJoystick(XMLFile = null, XMLFile = null);
 void CenterMousePosition();
@@ -5474,6 +5891,8 @@ void SetMouseVisible(bool, bool = false);
 String category;
 /* readonly */
 bool focus;
+/* readonly */
+Vector2 inputScale;
 /* readonly */
 Array<JoystickState> joysticks;
 /* readonly */
@@ -5538,6 +5957,11 @@ int weakRefs;
 
 class IntRect
 {
+public:
+IntRect();
+IntRect(const IntRect&in);
+IntRect(int, int, int, int);
+IntRect(int[]&inout);
 // Methods:
 Intersection IsInside(const IntVector2&) const;
 
@@ -5558,6 +5982,11 @@ int width;
 
 class IntVector2
 {
+public:
+IntVector2();
+IntVector2(const IntVector2&in);
+IntVector2(int, int);
+IntVector2(int[]&inout);
 // Methods:
 float Length() const;
 uint ToHash() const;
@@ -5568,10 +5997,51 @@ String ToString() const;
 Array<int> data;
 int x;
 int y;
+
+// Constants:
+static const IntVector2 DOWN;
+static const IntVector2 LEFT;
+static const IntVector2 ONE;
+static const IntVector2 RIGHT;
+static const IntVector2 UP;
+static const IntVector2 ZERO;
+};
+
+class IntVector3
+{
+public:
+IntVector3();
+IntVector3(const IntVector3&in);
+IntVector3(int, int, int);
+IntVector3(int[]&inout);
+// Methods:
+float Length() const;
+uint ToHash() const;
+String ToString() const;
+
+// Properties:
+/* readonly */
+Array<int> data;
+int x;
+int y;
+int z;
+
+// Constants:
+static const IntVector3 BACK;
+static const IntVector3 DOWN;
+static const IntVector3 FORWARD;
+static const IntVector3 LEFT;
+static const IntVector3 ONE;
+static const IntVector3 RIGHT;
+static const IntVector3 UP;
+static const IntVector3 ZERO;
 };
 
 class JSONFile
 {
+public:
+JSONFile();
+JSONFile(const String&in);
 // Methods:
 bool FromString(const String&);
 JSONValue& GetRoot();
@@ -5608,6 +6078,16 @@ int weakRefs;
 
 class JSONValue
 {
+public:
+~JSONValue();
+JSONValue();
+JSONValue(bool);
+JSONValue(int);
+JSONValue(uint);
+JSONValue(float);
+JSONValue(double);
+JSONValue(const String&in);
+JSONValue(const JSONValue&in);
 // Methods:
 void Clear();
 bool Contains(const String&) const;
@@ -5618,12 +6098,16 @@ double GetDouble() const;
 float GetFloat() const;
 int GetInt() const;
 uint GetUInt() const;
+Variant GetVariant() const;
+VariantMap GetVariantMap() const;
 void Insert(uint, const JSONValue&);
 const JSONValue& Get(const String&) const;
 void Pop();
 void Push(const JSONValue&);
 void Resize(uint);
 void Set(const String&, const JSONValue&);
+void SetVariant(const Variant&);
+void SetVariantMap(const VariantMap&);
 const String& GetString() const;
 
 // Properties:
@@ -5640,6 +6124,8 @@ bool isObject;
 /* readonly */
 bool isString;
 /* readonly */
+Array<String> keys;
+/* readonly */
 JSONNumberType numberType;
 /* readonly */
 String numberTypeName;
@@ -5649,10 +6135,13 @@ uint size;
 JSONValueType valueType;
 /* readonly */
 String valueTypeName;
+/* readonly */
+Array<JSONValue> values;
 };
 
 class JoystickState
 {
+public:
 
 // Properties:
 /* readonly */
@@ -5677,6 +6166,7 @@ uint numHats;
 
 class Light
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -5797,6 +6287,9 @@ uint zoneMask;
 
 class LineEdit
 {
+public:
+LineEdit();
+LineEdit(const String&in);
 // Methods:
 void AddChild(UIElement);
 void AddTag(const String&);
@@ -6020,6 +6513,9 @@ int width;
 
 class ListView
 {
+public:
+ListView();
+ListView(const String&in);
 // Methods:
 void AddChild(UIElement);
 void AddItem(UIElement);
@@ -6275,6 +6771,7 @@ int width;
 
 class Localization
 {
+public:
 // Methods:
 String Get(const String&);
 String GetLanguage(int);
@@ -6309,6 +6806,7 @@ int weakRefs;
 
 class Log
 {
+public:
 // Methods:
 void Close();
 void Debug(const String&);
@@ -6341,6 +6839,9 @@ int weakRefs;
 
 class Material
 {
+public:
+Material();
+Material(const String&in);
 // Methods:
 Material Clone(const String& = String ( )) const;
 Pass GetPass(uint, const String&);
@@ -6409,6 +6910,10 @@ int weakRefs;
 
 class Matrix2
 {
+public:
+Matrix2();
+Matrix2(const Matrix2&in);
+Matrix2(float, float, float, float);
 // Methods:
 bool Equals(const Matrix2&) const;
 Matrix2 Inverse() const;
@@ -6428,6 +6933,10 @@ float m11;
 
 class Matrix3
 {
+public:
+Matrix3();
+Matrix3(const Matrix3&in);
+Matrix3(float, float, float, float, float, float, float, float, float);
 // Methods:
 bool Equals(const Matrix3&) const;
 Matrix3 Inverse() const;
@@ -6452,6 +6961,14 @@ float m22;
 
 class Matrix3x4
 {
+public:
+Matrix3x4();
+Matrix3x4(const Matrix3x4&in);
+Matrix3x4(const Matrix3&in);
+Matrix3x4(const Matrix4&in);
+Matrix3x4(float, float, float, float, float, float, float, float, float, float, float, float);
+Matrix3x4(const Vector3&in, const Quaternion&in, const Vector3&in);
+Matrix3x4(const Vector3&in, const Quaternion&in, float);
 // Methods:
 void Decompose(Vector3&, Quaternion&, Vector3&) const;
 bool Equals(const Matrix3x4&) const;
@@ -6485,6 +7002,11 @@ float m23;
 
 class Matrix4
 {
+public:
+Matrix4();
+Matrix4(const Matrix4&in);
+Matrix4(const Matrix3&in);
+Matrix4(float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float);
 // Methods:
 void Decompose(Vector3&, Quaternion&, Vector3&) const;
 bool Equals(const Matrix4&) const;
@@ -6522,6 +7044,9 @@ float m33;
 
 class Menu
 {
+public:
+Menu();
+Menu(const String&in);
 // Methods:
 void AddChild(UIElement);
 void AddTag(const String&);
@@ -6751,6 +7276,8 @@ int width;
 
 class MessageBox
 {
+public:
+MessageBox(const String&in messageString = String ( ), const String&in titleString = String ( ), XMLFile& layoutFile = null, XMLFile& styleFile = null);
 // Methods:
 bool HasSubscribedToEvent(Object, const String&);
 bool HasSubscribedToEvent(const String&);
@@ -6775,7 +7302,11 @@ UIElement window;
 
 class Model
 {
+public:
+Model();
+Model(const String&in);
 // Methods:
+void AddMetadata(const String&, const Variant&);
 Model Clone(const String& = String ( )) const;
 Geometry GetGeometry(uint, uint) const;
 bool HasSubscribedToEvent(Object, const String&);
@@ -6783,6 +7314,8 @@ bool HasSubscribedToEvent(const String&);
 bool Load(File);
 bool Load(VectorBuffer&);
 bool Load(const String&);
+void RemoveAllMetadata();
+void RemoveMetadata(const String&);
 bool Save(File) const;
 bool Save(VectorBuffer&) const;
 bool Save(const String&) const;
@@ -6797,7 +7330,10 @@ BoundingBox boundingBox;
 String category;
 Array<Vector3> geometryCenters;
 /* readonly */
+bool hasMetadata;
+/* readonly */
 uint memoryUse;
+Array<Variant> metadata;
 String name;
 uint numGeometries;
 Array<uint> numGeometryLodLevels;
@@ -6819,6 +7355,9 @@ int weakRefs;
 
 class NamedPipe
 {
+public:
+NamedPipe();
+NamedPipe(const String&in, bool);
 // Methods:
 void Close();
 bool HasSubscribedToEvent(Object, const String&);
@@ -6859,7 +7398,9 @@ Vector3 ReadVector3();
 Vector4 ReadVector4();
 VectorBuffer ReadVectorBuffer(uint);
 uint Seek(uint);
+uint SeekRelative(int);
 void SendEvent(const String&, VariantMap& = VariantMap ( ));
+uint Tell() const;
 uint Write(Array<uint8>);
 bool WriteBool(bool);
 bool WriteBoundingBox(const BoundingBox&);
@@ -6924,6 +7465,7 @@ int weakRefs;
 
 class NavArea
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -6995,6 +7537,7 @@ BoundingBox worldBoundingBox;
 
 class Navigable
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -7063,6 +7606,7 @@ int weakRefs;
 
 class NavigationMesh
 {
+public:
 // Methods:
 void ApplyAttributes();
 bool Build();
@@ -7167,6 +7711,7 @@ BoundingBox worldBoundingBox;
 
 class Network
 {
+public:
 // Methods:
 void BroadcastMessage(int, bool, bool, const VectorBuffer&, uint = 0);
 void BroadcastRemoteEvent(Node, const String&, bool, const VariantMap& = VariantMap ( ));
@@ -7211,6 +7756,7 @@ int weakRefs;
 
 class NetworkPriority
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -7282,6 +7828,9 @@ int weakRefs;
 
 class Node
 {
+public:
+Node();
+Node(const String&in);
 // Methods:
 void AddChild(Node, uint = M_MAX_UNSIGNED);
 void AddTag(const String&);
@@ -7319,6 +7868,7 @@ bool HasComponent(const String&) const;
 bool HasSubscribedToEvent(Object, const String&);
 bool HasSubscribedToEvent(const String&);
 bool HasTag(const String&);
+bool IsChildOf(Node) const;
 bool Load(File, bool = false);
 bool Load(VectorBuffer&, bool = false);
 bool LoadJSON(const JSONValue&, bool = false);
@@ -7397,6 +7947,8 @@ Vector2 WorldToLocal2D(const Vector2&) const;
 void Yaw(float, TransformSpace = TS_LOCAL);
 
 // Properties:
+/* readonly */
+Array<Node> allChildrenByName;
 bool animationEnabled;
 /* readonly */
 Array<Variant> attributeDefaults;
@@ -7407,6 +7959,8 @@ Array<Variant> attributes;
 String category;
 /* readonly */
 Array<Node> children;
+/* readonly */
+Array<Node> childrenByName;
 /* readonly */
 Array<Component> components;
 Vector3 direction;
@@ -7441,6 +7995,8 @@ Scene scene;
 /* readonly */
 ScriptObject scriptObject;
 /* readonly */
+Vector3 signedWorldScale;
+/* readonly */
 Array<String> tags;
 bool temporary;
 /* readonly */
@@ -7472,6 +8028,7 @@ Vector3 worldUp;
 
 class Object
 {
+public:
 // Methods:
 bool HasSubscribedToEvent(Object, const String&);
 bool HasSubscribedToEvent(const String&);
@@ -7492,6 +8049,9 @@ int weakRefs;
 
 class ObjectAnimation
 {
+public:
+ObjectAnimation();
+ObjectAnimation(const String&in);
 // Methods:
 void AddAttributeAnimation(const String&, ValueAnimation, WrapMode = WM_LOOP, float = 1.0f);
 ValueAnimation GetAttributeAnimation(const String&) const;
@@ -7535,6 +8095,7 @@ Array<Variant> wrapModes;
 
 class Obstacle
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -7607,6 +8168,7 @@ int weakRefs;
 
 class Octree
 {
+public:
 // Methods:
 void AddManualDrawable(Drawable);
 void ApplyAttributes();
@@ -7689,6 +8251,7 @@ BoundingBox worldBoundingBox;
 
 class OffMeshConnection
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -7761,6 +8324,9 @@ int weakRefs;
 
 class PackageFile
 {
+public:
+PackageFile();
+PackageFile(const String&in, uint startOffset = 0);
 // Methods:
 bool Exists(const String&) const;
 Array<String> GetEntryNames() const;
@@ -7795,6 +8361,9 @@ int weakRefs;
 
 class ParticleEffect
 {
+public:
+ParticleEffect();
+ParticleEffect(const String&in);
 // Methods:
 void AddColorFrame(ColorFrame);
 void AddColorTime(Color&, float);
@@ -7874,6 +8443,9 @@ int weakRefs;
 
 class ParticleEffect2D
 {
+public:
+ParticleEffect2D();
+ParticleEffect2D(const String&in);
 // Methods:
 ParticleEffect2D Clone(const String& = String ( )) const;
 bool HasSubscribedToEvent(Object, const String&);
@@ -7906,6 +8478,7 @@ int weakRefs;
 
 class ParticleEmitter
 {
+public:
 // Methods:
 void ApplyAttributes();
 void ApplyEffect();
@@ -8013,6 +8586,7 @@ uint zoneMask;
 
 class ParticleEmitter2D
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -8064,6 +8638,7 @@ bool castShadows;
 String category;
 float drawDistance;
 ParticleEffect2D effect;
+bool emitting;
 bool enabled;
 /* readonly */
 bool enabledEffective;
@@ -8103,6 +8678,7 @@ uint zoneMask;
 
 class Pass
 {
+public:
 
 // Properties:
 bool alphaToCoverage;
@@ -8126,6 +8702,9 @@ int weakRefs;
 
 class PhysicsRaycastResult
 {
+public:
+~PhysicsRaycastResult();
+PhysicsRaycastResult();
 
 // Properties:
 /* readonly */
@@ -8138,6 +8717,9 @@ Vector3 position;
 
 class PhysicsRaycastResult2D
 {
+public:
+~PhysicsRaycastResult2D();
+PhysicsRaycastResult2D();
 
 // Properties:
 /* readonly */
@@ -8149,6 +8731,7 @@ Vector2 position;
 
 class PhysicsWorld
 {
+public:
 // Methods:
 void ApplyAttributes();
 PhysicsRaycastResult ConvexCast(CollisionShape, const Vector3&, const Quaternion&, const Vector3&, const Quaternion&, uint = 0xffff);
@@ -8237,6 +8820,7 @@ int weakRefs;
 
 class PhysicsWorld2D
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry() const;
@@ -8324,6 +8908,12 @@ int weakRefs;
 
 class Plane
 {
+public:
+Plane();
+Plane(const Plane&in);
+Plane(const Vector3&in, const Vector3&in, const Vector3&in);
+Plane(const Vector3&in, const Vector3&in);
+Plane(const Vector4&in);
 // Methods:
 void Define(const Vector3&, const Vector3&);
 void Define(const Vector3&, const Vector3&, const Vector3&);
@@ -8349,6 +8939,12 @@ Matrix3x4 reflectionMatrix;
 
 class Polyhedron
 {
+public:
+~Polyhedron();
+Polyhedron();
+Polyhedron(const Polyhedron&in);
+Polyhedron(const BoundingBox&in);
+Polyhedron(const Frustum&in);
 // Methods:
 void AddFace(const Vector3&, const Vector3&, const Vector3&);
 void AddFace(const Vector3&, const Vector3&, const Vector3&, const Vector3&);
@@ -8372,6 +8968,7 @@ uint numFaces;
 
 class ProgressBar
 {
+public:
 // Methods:
 void ChangeValue(float);
 bool HasSubscribedToEvent(Object, const String&);
@@ -8400,6 +8997,7 @@ int weakRefs;
 
 class PropertySet2D
 {
+public:
 // Methods:
 bool HasProperty(const String&) const;
 const String& GetProperty(const String&) const;
@@ -8413,6 +9011,17 @@ int weakRefs;
 
 class Quaternion
 {
+public:
+Quaternion();
+Quaternion(const Quaternion&in);
+Quaternion(float, float, float, float);
+Quaternion(float, const Vector3&in);
+Quaternion(float);
+Quaternion(float, float, float);
+Quaternion(const Vector3&in);
+Quaternion(const Vector3&in, const Vector3&in);
+Quaternion(const Vector3&in, const Vector3&in, const Vector3&in);
+Quaternion(const Matrix3&in);
 // Methods:
 Quaternion Conjugate() const;
 float DotProduct(const Quaternion&) const;
@@ -8426,13 +9035,17 @@ void FromRotationTo(const Vector3&, const Vector3&);
 Quaternion Inverse() const;
 bool IsNaN() const;
 float LengthSquared() const;
-Quaternion Nlerp(Quaternion, float, bool) const;
+Quaternion Nlerp(const Quaternion&, float, bool) const;
 void Normalize();
 Quaternion Normalized() const;
-Quaternion Slerp(Quaternion, float) const;
+Quaternion Slerp(const Quaternion&, float) const;
 String ToString() const;
 
 // Properties:
+/* readonly */
+float angle;
+/* readonly */
+Vector3 axis;
 /* readonly */
 Vector3 eulerAngles;
 /* readonly */
@@ -8451,6 +9064,10 @@ float z;
 
 class Ray
 {
+public:
+Ray();
+Ray(const Ray&in);
+Ray(const Vector3&in, const Vector3&in);
 // Methods:
 Vector3 ClosestPoint(const Ray&) const;
 void Define(const Vector3&, const Vector3&);
@@ -8470,6 +9087,8 @@ Vector3 origin;
 
 class RayQueryResult
 {
+public:
+RayQueryResult();
 
 // Properties:
 float distance;
@@ -8483,8 +9102,130 @@ uint subObject;
 Vector2 textureUV;
 };
 
+class RaycastVehicle
+{
+public:
+// Methods:
+void AddWheel(Node, Vector3, Vector3, float, float, bool);
+void ApplyAttributes();
+void DrawDebugGeometry(DebugRenderer, bool);
+Variant GetAttribute(const String&) const;
+ValueAnimation GetAttributeAnimation(const String&) const;
+float GetAttributeAnimationSpeed(const String&) const;
+float GetAttributeAnimationTime(const String&) const;
+WrapMode GetAttributeAnimationWrapMode(const String&) const;
+Variant GetAttributeDefault(const String&) const;
+float GetBrake(int);
+Vector3 GetContactNormal(int);
+Vector3 GetContactPosition(int);
+float GetEngineForce(int);
+bool GetInterceptNetworkUpdate(const String&) const;
+float GetMaxSuspensionTravel(int);
+float GetSteeringValue(int);
+Vector3 GetWheelAxle(int);
+Vector3 GetWheelConnectionPoint(int);
+float GetWheelDampingCompression(int);
+float GetWheelDampingRelaxation(int);
+Vector3 GetWheelDirection(int);
+float GetWheelFrictionSlip(int);
+Node GetWheelNode(int);
+Vector3 GetWheelPosition(int);
+float GetWheelRadius(int);
+float GetWheelRestLength(int);
+float GetWheelRollInfluence(int);
+Vector3 GetWheelRotation(int);
+float GetWheelSideSlipSpeed(int);
+float GetWheelSkidInfo(int);
+float GetWheelSkidInfoCumulative(int);
+float GetWheelSuspensionStiffness(int);
+bool HasSubscribedToEvent(Object, const String&);
+bool HasSubscribedToEvent(const String&);
+void Init();
+bool IsFrontWheel(int);
+bool Load(File, bool = false);
+bool Load(VectorBuffer&, bool = false);
+bool LoadJSON(const JSONValue&, bool = false);
+bool LoadXML(const XMLElement&, bool = false);
+void MarkNetworkUpdate() const;
+void Remove();
+void RemoveAttributeAnimation(const String&);
+void RemoveInstanceDefault();
+void RemoveObjectAnimation();
+void ResetSuspension();
+void ResetToDefault();
+void ResetWheels();
+bool Save(File) const;
+bool Save(VectorBuffer&) const;
+bool SaveJSON(JSONValue&) const;
+bool SaveXML(XMLElement&) const;
+void SendEvent(const String&, VariantMap& = VariantMap ( ));
+void SetAnimationTime(float);
+bool SetAttribute(const String&, const Variant&);
+void SetAttributeAnimation(const String&, ValueAnimation, WrapMode = WM_LOOP, float = 1.0f);
+void SetAttributeAnimationSpeed(const String&, float);
+void SetAttributeAnimationTime(const String&, float);
+void SetAttributeAnimationWrapMode(const String&, WrapMode);
+void SetBrake(int, float);
+void SetEngineForce(int, float);
+void SetInterceptNetworkUpdate(const String&, bool);
+void SetMaxSuspensionTravel(int, float);
+void SetSteeringValue(int, float);
+void SetWheelAxle(int, Vector3);
+void SetWheelDampingCompression(int, float);
+void SetWheelDampingRelaxation(int, float);
+void SetWheelDirection(int, Vector3);
+void SetWheelFrictionSlip(int, float);
+void SetWheelRadius(int, float);
+void SetWheelRestLength(int, float);
+void SetWheelRollInfluence(int, float);
+void SetWheelSkidInfo(int, float);
+void SetWheelSkidInfoCumulative(int, float);
+void SetWheelSuspensionStiffness(int, float);
+void UpdateWheelTransform(int, bool);
+bool WheelIsGrounded(int);
+
+// Properties:
+bool animationEnabled;
+/* readonly */
+Array<Variant> attributeDefaults;
+/* readonly */
+Array<AttributeInfo> attributeInfos;
+Array<Variant> attributes;
+/* readonly */
+String category;
+bool enabled;
+/* readonly */
+bool enabledEffective;
+/* readonly */
+uint id;
+float inAirRPM;
+float maxSideSlipSpeed;
+/* readonly */
+Node node;
+/* readonly */
+uint numAttributes;
+/* readonly */
+int numWheels;
+ObjectAnimation objectAnimation;
+/* readonly */
+int refs;
+bool temporary;
+/* readonly */
+StringHash type;
+/* readonly */
+String typeName;
+/* readonly */
+int weakRefs;
+};
+
 class Rect
 {
+public:
+Rect();
+Rect(const Rect&in);
+Rect(float, float, float, float);
+Rect(const Vector2&in, const Vector2&in);
+Rect(const Vector4&in);
 // Methods:
 void Clear();
 void Clip(const Rect&);
@@ -8515,6 +9256,7 @@ float top;
 
 class RefCounted
 {
+public:
 
 // Properties:
 /* readonly */
@@ -8525,6 +9267,8 @@ int weakRefs;
 
 class RenderPath
 {
+public:
+RenderPath();
 // Methods:
 void AddCommand(const RenderPathCommand&);
 void AddRenderTarget(const RenderTargetInfo&);
@@ -8556,6 +9300,10 @@ int weakRefs;
 
 class RenderPathCommand
 {
+public:
+~RenderPathCommand();
+RenderPathCommand();
+RenderPathCommand(const RenderPathCommand&in);
 // Methods:
 void RemoveShaderParameter(const String&);
 void SetOutput(uint, const String&, CubeMapFace = FACE_POSITIVE_X);
@@ -8591,6 +9339,7 @@ String vertexShaderName;
 
 class RenderSurface
 {
+public:
 // Methods:
 void QueueUpdate();
 
@@ -8614,6 +9363,10 @@ int width;
 
 class RenderTargetInfo
 {
+public:
+~RenderTargetInfo();
+RenderTargetInfo();
+RenderTargetInfo(const RenderTargetInfo&in);
 
 // Properties:
 bool autoResolve;
@@ -8632,6 +9385,7 @@ String tag;
 
 class Renderer
 {
+public:
 // Methods:
 void DrawDebugGeometry(bool) const;
 bool HasSubscribedToEvent(Object, const String&);
@@ -8707,6 +9461,7 @@ int weakRefs;
 
 class Resource
 {
+public:
 // Methods:
 bool HasSubscribedToEvent(Object, const String&);
 bool HasSubscribedToEvent(const String&);
@@ -8738,6 +9493,7 @@ int weakRefs;
 
 class ResourceCache
 {
+public:
 // Methods:
 bool AddManualResource(Resource);
 bool AddPackageFile(PackageFile, uint = M_MAX_UNSIGNED);
@@ -8752,6 +9508,8 @@ String GetPreferredResourceDir(const String&) const;
 Resource GetResource(StringHash, const String&, bool = true);
 Resource GetResource(const String&, const String&, bool = true);
 String GetResourceFileName(const String&) const;
+Array<Resource> GetResources(StringHash);
+Array<Resource> GetResources(const String&);
 bool HasSubscribedToEvent(Object, const String&);
 bool HasSubscribedToEvent(const String&);
 void ReleaseAllResources(bool = false);
@@ -8801,6 +9559,11 @@ int weakRefs;
 
 class ResourceRef
 {
+public:
+~ResourceRef();
+ResourceRef();
+ResourceRef(const ResourceRef&in);
+ResourceRef(const String&in, const String&in);
 
 // Properties:
 String name;
@@ -8809,6 +9572,10 @@ StringHash type;
 
 class ResourceRefList
 {
+public:
+~ResourceRefList();
+ResourceRefList();
+ResourceRefList(const ResourceRefList&in);
 // Methods:
 void Resize(uint);
 
@@ -8823,6 +9590,7 @@ StringHash type;
 
 class RibbonTrail
 {
+public:
 // Methods:
 void ApplyAttributes();
 void Commit();
@@ -8925,6 +9693,7 @@ uint zoneMask;
 
 class RigidBody
 {
+public:
 // Methods:
 void Activate();
 void ApplyAttributes();
@@ -9037,12 +9806,14 @@ int weakRefs;
 
 class RigidBody2D
 {
+public:
 // Methods:
 void ApplyAngularImpulse(float, bool);
 void ApplyAttributes();
 void ApplyForce(const Vector2&, const Vector2&, bool);
 void ApplyForceToCenter(const Vector2&, bool);
 void ApplyLinearImpulse(const Vector2&, const Vector2&, bool);
+void ApplyLinearImpulseToCenter(const Vector2&, bool);
 void ApplyTorque(float, bool);
 void DrawDebugGeometry(DebugRenderer, bool);
 Variant GetAttribute(const String&) const;
@@ -9122,6 +9893,9 @@ int weakRefs;
 
 class Scene
 {
+public:
+Scene();
+Scene(const String&in);
 // Methods:
 void AddChild(Node, uint = M_MAX_UNSIGNED);
 void AddRequiredPackageFile(PackageFile);
@@ -9174,6 +9948,7 @@ Node InstantiateXML(File, const Vector3&, const Quaternion&, CreateMode = REPLIC
 Node InstantiateXML(VectorBuffer&, const Vector3&, const Quaternion&, CreateMode = REPLICATED);
 Node InstantiateXML(XMLFile, const Vector3&, const Quaternion&, CreateMode = REPLICATED);
 Node InstantiateXML(const XMLElement&, const Vector3&, const Quaternion&, CreateMode = REPLICATED);
+bool IsChildOf(Node) const;
 bool Load(File, bool = false);
 bool Load(VectorBuffer&, bool = false);
 bool LoadAsync(File, LoadMode = LOAD_SCENE_AND_RESOURCES);
@@ -9260,6 +10035,8 @@ Vector2 WorldToLocal2D(const Vector2&) const;
 void Yaw(float, TransformSpace = TS_LOCAL);
 
 // Properties:
+/* readonly */
+Array<Node> allChildrenByName;
 bool animationEnabled;
 /* readonly */
 LoadMode asyncLoadMode;
@@ -9279,6 +10056,8 @@ String category;
 uint checksum;
 /* readonly */
 Array<Node> children;
+/* readonly */
+Array<Node> childrenByName;
 /* readonly */
 Array<Component> components;
 /* readonly */
@@ -9319,6 +10098,8 @@ Vector3 scale;
 Vector2 scale2D;
 /* readonly */
 ScriptObject scriptObject;
+/* readonly */
+Vector3 signedWorldScale;
 float smoothingConstant;
 float snapThreshold;
 /* readonly */
@@ -9355,6 +10136,7 @@ Vector3 worldUp;
 
 class Script
 {
+public:
 // Methods:
 void DumpAPI(DumpMode = DOXYGEN, const String& = String ( ));
 bool Execute(const String&);
@@ -9380,6 +10162,9 @@ int weakRefs;
 
 class ScriptFile
 {
+public:
+ScriptFile();
+ScriptFile(const String&in);
 // Methods:
 void ClearDelayedExecute(const String& = String ( ));
 void DelayedExecute(float, bool, const String&, const Array<Variant> = null);
@@ -9416,6 +10201,7 @@ int weakRefs;
 
 class ScriptInstance
 {
+public:
 // Methods:
 void ApplyAttributes();
 void ClearDelayedExecute(const String& = String ( ));
@@ -9493,10 +10279,14 @@ int weakRefs;
 
 class ScriptObject
 {
+public:
 };
 
 class ScrollBar
 {
+public:
+ScrollBar();
+ScrollBar(const String&in);
 // Methods:
 void AddChild(UIElement);
 void AddTag(const String&);
@@ -9715,6 +10505,9 @@ int width;
 
 class ScrollView
 {
+public:
+ScrollView();
+ScrollView(const String&in);
 // Methods:
 void AddChild(UIElement);
 void AddTag(const String&);
@@ -9934,6 +10727,7 @@ int width;
 
 class Serializable
 {
+public:
 // Methods:
 void ApplyAttributes();
 Variant GetAttribute(const String&) const;
@@ -9979,6 +10773,7 @@ int weakRefs;
 
 class Serializer
 {
+public:
 // Methods:
 uint Write(Array<uint8>);
 bool WriteBool(bool);
@@ -10018,6 +10813,7 @@ bool WriteVectorBuffer(const VectorBuffer&);
 
 class Skeleton
 {
+public:
 // Methods:
 Bone GetBone(const String&) const;
 void Reset();
@@ -10033,6 +10829,7 @@ Bone rootBone;
 
 class Skybox
 {
+public:
 // Methods:
 void ApplyAttributes();
 void ApplyMaterialList(const String& = String ( ));
@@ -10127,6 +10924,9 @@ uint zoneMask;
 
 class Slider
 {
+public:
+Slider();
+Slider(const String&in);
 // Methods:
 void AddChild(UIElement);
 void AddTag(const String&);
@@ -10345,6 +11145,7 @@ int width;
 
 class SmoothedTransform
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -10419,12 +11220,18 @@ int weakRefs;
 
 class Sound
 {
+public:
+Sound();
+Sound(const String&in);
 // Methods:
+void AddMetadata(const String&, const Variant&);
 bool HasSubscribedToEvent(Object, const String&);
 bool HasSubscribedToEvent(const String&);
 bool Load(File);
 bool Load(VectorBuffer&);
 bool Load(const String&);
+void RemoveAllMetadata();
+void RemoveMetadata(const String&);
 bool Save(File) const;
 bool Save(VectorBuffer&) const;
 bool Save(const String&) const;
@@ -10438,10 +11245,13 @@ bool compressed;
 /* readonly */
 float frequency;
 /* readonly */
+bool hasMetadata;
+/* readonly */
 float length;
 bool looped;
 /* readonly */
 uint memoryUse;
+Array<Variant> metadata;
 String name;
 /* readonly */
 int refs;
@@ -10463,6 +11273,7 @@ int weakRefs;
 
 class SoundListener
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -10530,6 +11341,8 @@ int weakRefs;
 
 class SoundSource
 {
+public:
+SoundSource();
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -10560,6 +11373,7 @@ bool Save(File) const;
 bool Save(VectorBuffer&) const;
 bool SaveJSON(JSONValue&) const;
 bool SaveXML(XMLElement&) const;
+void Seek(float);
 void SendEvent(const String&, VariantMap& = VariantMap ( ));
 void SetAnimationTime(float);
 bool SetAttribute(const String&, const Variant&);
@@ -10615,6 +11429,7 @@ int weakRefs;
 
 class SoundSource3D
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -10645,6 +11460,7 @@ bool Save(File) const;
 bool Save(VectorBuffer&) const;
 bool SaveJSON(JSONValue&) const;
 bool SaveXML(XMLElement&) const;
+void Seek(float);
 void SendEvent(const String&, VariantMap& = VariantMap ( ));
 void SetAngleAttenuation(float, float);
 void SetAnimationTime(float);
@@ -10707,6 +11523,13 @@ int weakRefs;
 
 class Sphere
 {
+public:
+Sphere();
+Sphere(const Sphere&in);
+Sphere(const Vector3&in, float);
+Sphere(const BoundingBox&in);
+Sphere(const Frustum&in);
+Sphere(const Polyhedron&in);
 // Methods:
 void Clear();
 void Define(const BoundingBox&);
@@ -10716,6 +11539,8 @@ void Define(const Sphere&);
 void Define(const Vector3&, float);
 bool Defined() const;
 float Distance(const Vector3&) const;
+Vector3 GetLocalPoint(float, float) const;
+Vector3 GetPoint(float, float) const;
 Intersection IsInside(const BoundingBox&) const;
 Intersection IsInside(const Sphere&) const;
 Intersection IsInside(const Vector3&) const;
@@ -10733,6 +11558,11 @@ float radius;
 
 class Spline
 {
+public:
+Spline();
+Spline(InterpolationMode);
+Spline(Variant[]@, InterpolationMode = BEZIER_CURVE);
+Spline(const Spline&in);
 // Methods:
 void AddKnot(const Variant&);
 void AddKnot(const Variant&, uint);
@@ -10749,6 +11579,7 @@ Array<Variant> knots;
 
 class SplinePath
 {
+public:
 // Methods:
 void AddControlPoint(Node, uint = M_MAX_UNSIGNED);
 void ApplyAttributes();
@@ -10831,6 +11662,9 @@ int weakRefs;
 
 class Sprite
 {
+public:
+Sprite();
+Sprite(const String&in);
 // Methods:
 void AddChild(UIElement);
 void AddTag(const String&);
@@ -11043,6 +11877,9 @@ int width;
 
 class Sprite2D
 {
+public:
+Sprite2D();
+Sprite2D(const String&in);
 // Methods:
 bool HasSubscribedToEvent(Object, const String&);
 bool HasSubscribedToEvent(const String&);
@@ -11079,6 +11916,9 @@ int weakRefs;
 
 class SpriteSheet2D
 {
+public:
+SpriteSheet2D();
+SpriteSheet2D(const String&in);
 // Methods:
 void DefineSprite(const String&, const IntRect&, const Vector2& = Vector2 ( 0.5f , 0.5f ), const IntVector2& = IntVector2 :: ZERO);
 Sprite2D GetSprite(const String&);
@@ -11113,6 +11953,7 @@ int weakRefs;
 
 class StaticModel
 {
+public:
 // Methods:
 void ApplyAttributes();
 void ApplyMaterialList(const String& = String ( ));
@@ -11208,6 +12049,7 @@ uint zoneMask;
 
 class StaticModelGroup
 {
+public:
 // Methods:
 void AddInstanceNode(Node);
 void ApplyAttributes();
@@ -11310,6 +12152,7 @@ uint zoneMask;
 
 class StaticSprite2D
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -11411,6 +12254,16 @@ uint zoneMask;
 
 class String
 {
+public:
+~String();
+String();
+String(const String&in);
+String(int);
+String(uint);
+String(float);
+String(double);
+String(bool);
+String(const char*);
 // Methods:
 void AppendUTF8(uint);
 uint AtUTF8(uint) const;
@@ -11444,14 +12297,17 @@ Color ToColor() const;
 double ToDouble() const;
 float ToFloat() const;
 int ToInt(int = 10) const;
+int64 ToInt64(int = 10) const;
 IntRect ToIntRect() const;
 IntVector2 ToIntVector2() const;
+IntVector3 ToIntVector3() const;
 String ToLower() const;
 Matrix3 ToMatrix3() const;
 Matrix3x4 ToMatrix3x4() const;
 Matrix4 ToMatrix4() const;
 Quaternion ToQuaternion() const;
 uint ToUInt(int = 10) const;
+uint64 ToUInt64(int = 10) const;
 String ToUpper() const;
 Vector2 ToVector2() const;
 Vector3 ToVector3() const;
@@ -11470,6 +12326,11 @@ uint utf8Length;
 
 class StringHash
 {
+public:
+StringHash();
+StringHash(const StringHash&in);
+StringHash(const String&in);
+StringHash(uint);
 // Methods:
 String ToString() const;
 
@@ -11480,6 +12341,9 @@ uint value;
 
 class Technique
 {
+public:
+Technique();
+Technique(const String&in);
 // Methods:
 Technique Clone(const String& = String ( )) const;
 Pass CreatePass(const String&);
@@ -11526,6 +12390,10 @@ int weakRefs;
 
 class TechniqueEntry
 {
+public:
+~TechniqueEntry();
+TechniqueEntry();
+TechniqueEntry(const TechniqueEntry&in);
 
 // Properties:
 float lodDistance;
@@ -11535,6 +12403,7 @@ Technique technique;
 
 class Terrain
 {
+public:
 // Methods:
 void ApplyAttributes();
 void ApplyHeightMap();
@@ -11552,6 +12421,7 @@ Vector3 GetNormal(const Vector3&) const;
 TerrainPatch GetPatch(int, int) const;
 bool HasSubscribedToEvent(Object, const String&);
 bool HasSubscribedToEvent(const String&);
+Vector3 HeightMapToWorld(const IntVector2&) const;
 bool Load(File, bool = false);
 bool Load(VectorBuffer&, bool = false);
 bool LoadJSON(const JSONValue&, bool = false);
@@ -11637,6 +12507,7 @@ uint zoneMask;
 
 class TerrainPatch
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -11722,6 +12593,9 @@ uint zoneMask;
 
 class Text
 {
+public:
+Text();
+Text(const String&in);
 // Methods:
 void AddChild(UIElement);
 void AddTag(const String&);
@@ -11795,7 +12669,7 @@ void SetEnabledRecursive(bool);
 void SetFixedHeight(int);
 void SetFixedSize(int, int);
 void SetFixedWidth(int);
-bool SetFont(Font, int);
+bool SetFont(Font, float);
 bool SetFont(const String&, int);
 void SetInterceptNetworkUpdate(const String&, bool);
 void SetLayout(LayoutMode, int = 0, const IntRect& = IntRect ( 0 , 0 , 0 , 0 ));
@@ -11827,9 +12701,9 @@ bool bringToFront;
 /* readonly */
 String category;
 /* readonly */
-Array<IntVector2> charPositions;
+Array<Vector2> charPositions;
 /* readonly */
-Array<IntVector2> charSizes;
+Array<Vector2> charSizes;
 /* readonly */
 IntVector2 childOffset;
 /* readonly */
@@ -11871,7 +12745,7 @@ bool focus;
 FocusMode focusMode;
 /* readonly */
 Font font;
-int fontSize;
+float fontSize;
 int height;
 HorizontalAlignment horizontalAlignment;
 Color hoverColor;
@@ -11918,10 +12792,10 @@ int refs;
 /* readonly */
 UIElement root;
 /* readonly */
-int rowHeight;
+float rowHeight;
 float rowSpacing;
 /* readonly */
-Array<int> rowWidths;
+Array<float> rowWidths;
 /* readonly */
 IntVector2 screenPosition;
 bool selected;
@@ -11959,6 +12833,7 @@ bool wordwrap;
 
 class Text3D
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -11994,8 +12869,8 @@ void SetAttributeAnimation(const String&, ValueAnimation, WrapMode = WM_LOOP, fl
 void SetAttributeAnimationSpeed(const String&, float);
 void SetAttributeAnimationTime(const String&, float);
 void SetAttributeAnimationWrapMode(const String&, WrapMode);
-bool SetFont(Font, int);
-bool SetFont(const String&, int);
+bool SetFont(Font, float);
+bool SetFont(const String&, float);
 void SetInterceptNetworkUpdate(const String&, bool);
 
 // Properties:
@@ -12011,9 +12886,9 @@ bool castShadows;
 /* readonly */
 String category;
 /* readonly */
-Array<IntVector2> charPositions;
+Array<Vector2> charPositions;
 /* readonly */
-Array<IntVector2> charSizes;
+Array<Vector2> charSizes;
 /* writeonly */
 Color color;
 Array<Color> colors;
@@ -12030,7 +12905,7 @@ FaceCameraMode faceCameraMode;
 bool fixedScreenSize;
 /* readonly */
 Font font;
-int fontSize;
+float fontSize;
 /* readonly */
 int height;
 HorizontalAlignment horizontalAlignment;
@@ -12057,10 +12932,10 @@ float opacity;
 /* readonly */
 int refs;
 /* readonly */
-int rowHeight;
+float rowHeight;
 float rowSpacing;
 /* readonly */
-Array<int> rowWidths;
+Array<float> rowWidths;
 float shadowDistance;
 uint shadowMask;
 bool temporary;
@@ -12084,13 +12959,19 @@ uint zoneMask;
 
 class Texture
 {
+public:
+Texture();
+Texture(const String&in);
 // Methods:
+void AddMetadata(const String&, const Variant&);
 void ClearDataLost();
 bool HasSubscribedToEvent(Object, const String&);
 bool HasSubscribedToEvent(const String&);
 bool Load(File);
 bool Load(VectorBuffer&);
 bool Load(const String&);
+void RemoveAllMetadata();
+void RemoveMetadata(const String&);
 bool Save(File) const;
 bool Save(VectorBuffer&) const;
 bool Save(const String&) const;
@@ -12116,6 +12997,8 @@ TextureFilterMode filterMode;
 /* readonly */
 uint format;
 /* readonly */
+bool hasMetadata;
+/* readonly */
 int height;
 /* readonly */
 Array<int> levelHeight;
@@ -12127,6 +13010,7 @@ uint levels;
 bool levelsDirty;
 /* readonly */
 uint memoryUse;
+Array<Variant> metadata;
 Array<int> mipsToSkip;
 /* readonly */
 int multiSample;
@@ -12152,7 +13036,11 @@ int width;
 
 class Texture2D
 {
+public:
+Texture2D();
+Texture2D(const String&in);
 // Methods:
+void AddMetadata(const String&, const Variant&);
 void ClearDataLost();
 Image GetImage() const;
 bool HasSubscribedToEvent(Object, const String&);
@@ -12160,6 +13048,8 @@ bool HasSubscribedToEvent(const String&);
 bool Load(File);
 bool Load(VectorBuffer&);
 bool Load(const String&);
+void RemoveAllMetadata();
+void RemoveMetadata(const String&);
 bool Save(File) const;
 bool Save(VectorBuffer&) const;
 bool Save(const String&) const;
@@ -12187,6 +13077,8 @@ TextureFilterMode filterMode;
 /* readonly */
 uint format;
 /* readonly */
+bool hasMetadata;
+/* readonly */
 int height;
 /* readonly */
 Array<int> levelHeight;
@@ -12198,6 +13090,7 @@ uint levels;
 bool levelsDirty;
 /* readonly */
 uint memoryUse;
+Array<Variant> metadata;
 Array<int> mipsToSkip;
 /* readonly */
 int multiSample;
@@ -12225,13 +13118,19 @@ int width;
 
 class Texture2DArray
 {
+public:
+Texture2DArray();
+Texture2DArray(const String&in);
 // Methods:
+void AddMetadata(const String&, const Variant&);
 void ClearDataLost();
 bool HasSubscribedToEvent(Object, const String&);
 bool HasSubscribedToEvent(const String&);
 bool Load(File);
 bool Load(VectorBuffer&);
 bool Load(const String&);
+void RemoveAllMetadata();
+void RemoveMetadata(const String&);
 bool Save(File) const;
 bool Save(VectorBuffer&) const;
 bool Save(const String&) const;
@@ -12259,6 +13158,8 @@ TextureFilterMode filterMode;
 /* readonly */
 uint format;
 /* readonly */
+bool hasMetadata;
+/* readonly */
 int height;
 uint layers;
 /* readonly */
@@ -12271,6 +13172,7 @@ uint levels;
 bool levelsDirty;
 /* readonly */
 uint memoryUse;
+Array<Variant> metadata;
 Array<int> mipsToSkip;
 /* readonly */
 int multiSample;
@@ -12298,13 +13200,19 @@ int width;
 
 class Texture3D
 {
+public:
+Texture3D();
+Texture3D(const String&in);
 // Methods:
+void AddMetadata(const String&, const Variant&);
 void ClearDataLost();
 bool HasSubscribedToEvent(Object, const String&);
 bool HasSubscribedToEvent(const String&);
 bool Load(File);
 bool Load(VectorBuffer&);
 bool Load(const String&);
+void RemoveAllMetadata();
+void RemoveMetadata(const String&);
 bool Save(File) const;
 bool Save(VectorBuffer&) const;
 bool Save(const String&) const;
@@ -12332,6 +13240,8 @@ TextureFilterMode filterMode;
 /* readonly */
 uint format;
 /* readonly */
+bool hasMetadata;
+/* readonly */
 int height;
 /* readonly */
 Array<int> levelHeight;
@@ -12343,6 +13253,7 @@ uint levels;
 bool levelsDirty;
 /* readonly */
 uint memoryUse;
+Array<Variant> metadata;
 Array<int> mipsToSkip;
 /* readonly */
 int multiSample;
@@ -12368,7 +13279,11 @@ int width;
 
 class TextureCube
 {
+public:
+TextureCube();
+TextureCube(const String&in);
 // Methods:
+void AddMetadata(const String&, const Variant&);
 void ClearDataLost();
 Image GetImage(CubeMapFace) const;
 bool HasSubscribedToEvent(Object, const String&);
@@ -12376,6 +13291,8 @@ bool HasSubscribedToEvent(const String&);
 bool Load(File);
 bool Load(VectorBuffer&);
 bool Load(const String&);
+void RemoveAllMetadata();
+void RemoveMetadata(const String&);
 bool Save(File) const;
 bool Save(VectorBuffer&) const;
 bool Save(const String&) const;
@@ -12403,6 +13320,8 @@ TextureFilterMode filterMode;
 /* readonly */
 uint format;
 /* readonly */
+bool hasMetadata;
+/* readonly */
 int height;
 /* readonly */
 Array<int> levelHeight;
@@ -12414,6 +13333,7 @@ uint levels;
 bool levelsDirty;
 /* readonly */
 uint memoryUse;
+Array<Variant> metadata;
 Array<int> mipsToSkip;
 /* readonly */
 int multiSample;
@@ -12441,6 +13361,7 @@ int width;
 
 class TextureFrame
 {
+public:
 
 // Properties:
 float time;
@@ -12449,6 +13370,7 @@ Rect uv;
 
 class Tile2D
 {
+public:
 // Methods:
 bool HasProperty(const String&) const;
 const String& GetProperty(const String&) const;
@@ -12466,6 +13388,7 @@ int weakRefs;
 
 class TileMap2D
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -12477,6 +13400,7 @@ WrapMode GetAttributeAnimationWrapMode(const String&) const;
 Variant GetAttributeDefault(const String&) const;
 bool GetInterceptNetworkUpdate(const String&) const;
 TileMapLayer2D GetLayer(uint) const;
+Array<TileMapObject2D> GetTileCollisionShapes(int) const;
 bool HasSubscribedToEvent(Object, const String&);
 bool HasSubscribedToEvent(const String&);
 bool Load(File, bool = false);
@@ -12541,6 +13465,7 @@ int weakRefs;
 
 class TileMapInfo2D
 {
+public:
 
 // Properties:
 int height;
@@ -12556,6 +13481,7 @@ int width;
 
 class TileMapLayer2D
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -12641,6 +13567,7 @@ int width;
 
 class TileMapObject2D
 {
+public:
 // Methods:
 bool HasProperty(const String&) const;
 const String& GetProperty(const String&) const;
@@ -12671,6 +13598,7 @@ int weakRefs;
 
 class Time
 {
+public:
 // Methods:
 bool HasSubscribedToEvent(Object, const String&);
 bool HasSubscribedToEvent(const String&);
@@ -12703,6 +13631,8 @@ int weakRefs;
 
 class Timer
 {
+public:
+Timer();
 // Methods:
 uint GetMSec(bool);
 void Reset();
@@ -12710,6 +13640,9 @@ void Reset();
 
 class TmxFile2D
 {
+public:
+TmxFile2D();
+TmxFile2D(const String&in);
 // Methods:
 bool HasSubscribedToEvent(Object, const String&);
 bool HasSubscribedToEvent(const String&);
@@ -12741,6 +13674,9 @@ int weakRefs;
 
 class ToolTip
 {
+public:
+ToolTip();
+ToolTip(const String&in);
 // Methods:
 void AddChild(UIElement);
 void AddTag(const String&);
@@ -12944,6 +13880,7 @@ int width;
 
 class TouchState
 {
+public:
 
 // Properties:
 IntVector2 delta;
@@ -12957,6 +13894,7 @@ UIElement touchedElement;
 
 class UI
 {
+public:
 // Methods:
 void Clear();
 void DebugDraw(UIElement);
@@ -12994,6 +13932,9 @@ float doubleClickInterval;
 int dragBeginDistance;
 float dragBeginInterval;
 UIElement focusElement;
+FontHintLevel fontHintLevel;
+int fontOversampling;
+float fontSubpixelThreshold;
 bool forceAutoHint;
 /* readonly */
 UIElement frontElement;
@@ -13019,6 +13960,9 @@ int weakRefs;
 
 class UIElement
 {
+public:
+UIElement();
+UIElement(const String&in);
 // Methods:
 void AddChild(UIElement);
 void AddTag(const String&);
@@ -13221,6 +14165,9 @@ int width;
 
 class ValueAnimation
 {
+public:
+ValueAnimation();
+ValueAnimation(const String&in);
 // Methods:
 bool HasSubscribedToEvent(Object, const String&);
 bool HasSubscribedToEvent(const String&);
@@ -13257,6 +14204,41 @@ int weakRefs;
 
 class Variant
 {
+public:
+~Variant();
+Variant();
+Variant(const Variant&in);
+Variant(int);
+Variant(uint);
+Variant(int64);
+Variant(uint64);
+Variant(const StringHash&in);
+Variant(bool);
+Variant(float);
+Variant(double);
+Variant(const Vector2&in);
+Variant(const Vector3&in);
+Variant(const Vector4&in);
+Variant(const Quaternion&in);
+Variant(const Color&in);
+Variant(const String&in);
+Variant(const ResourceRef&in);
+Variant(const ResourceRefList&in);
+Variant(const Variant[]@);
+Variant(const String[]@);
+Variant(const VariantMap&in);
+Variant(const Rect&in);
+Variant(const IntRect&in);
+Variant(const IntVector2&in);
+Variant(const IntVector3&in);
+Variant(RefCounted@);
+Variant(ScriptObject@);
+Variant(const Matrix3&in);
+Variant(const Matrix3x4&in);
+Variant(const Matrix4&in);
+Variant(const String&in, const String&in);
+Variant(VariantType, const String&in);
+Variant(const VectorBuffer&in);
 // Methods:
 void Clear();
 const Color& GetColor() const;
@@ -13267,14 +14249,17 @@ VectorBuffer GetBuffer() const;
 double GetDouble() const;
 float GetFloat() const;
 int GetInt() const;
+int GetInt64() const;
 RefCounted GetPtr() const;
 ScriptObject GetScriptObject() const;
 StringHash GetStringHash() const;
 Array<String> GetStringVector() const;
 uint GetUInt() const;
+uint64 GetUInt64() const;
 Array<Variant> GetVariantVector() const;
 const IntRect& GetIntRect() const;
 const IntVector2& GetIntVector2() const;
+const IntVector3& GetIntVector3() const;
 const Matrix3& GetMatrix3() const;
 const Matrix3x4& GetMatrix3x4() const;
 const Matrix4& GetMatrix4() const;
@@ -13302,6 +14287,10 @@ bool zero;
 
 class VariantMap
 {
+public:
+~VariantMap();
+VariantMap();
+VariantMap(const VariantMap&in);
 // Methods:
 void Clear();
 bool Contains(StringHash) const;
@@ -13320,6 +14309,12 @@ Array<Variant> values;
 
 class Vector2
 {
+public:
+Vector2();
+Vector2(const Vector2&in);
+Vector2(const IntVector2&in);
+Vector2(float, float);
+Vector2(float[]&inout);
 // Methods:
 Vector2 Abs() const;
 float AbsDotProduct(const Vector2&) const;
@@ -13342,10 +14337,27 @@ float length;
 float lengthSquared;
 float x;
 float y;
+
+// Constants:
+static const Vector2 DOWN;
+static const Vector2 LEFT;
+static const Vector2 ONE;
+static const Vector2 RIGHT;
+static const Vector2 UP;
+static const Vector2 ZERO;
 };
 
 class Vector3
 {
+public:
+Vector3();
+Vector3(const Vector3&in);
+Vector3(const Vector2&in, float);
+Vector3(const Vector2&in);
+Vector3(const IntVector3&in);
+Vector3(float, float, float);
+Vector3(float, float);
+Vector3(float[]&inout);
 // Methods:
 Vector3 Abs() const;
 float AbsDotProduct(const Vector3&) const;
@@ -13357,6 +14369,7 @@ bool IsNaN() const;
 Vector3 Lerp(const Vector3&, float) const;
 void Normalize();
 Vector3 Normalized() const;
+Vector3 Orthogonalize(const Vector3&) const;
 float ProjectOntoAxis(const Vector3&) const;
 String ToString() const;
 
@@ -13370,10 +14383,26 @@ float lengthSquared;
 float x;
 float y;
 float z;
+
+// Constants:
+static const Vector3 BACK;
+static const Vector3 DOWN;
+static const Vector3 FORWARD;
+static const Vector3 LEFT;
+static const Vector3 ONE;
+static const Vector3 RIGHT;
+static const Vector3 UP;
+static const Vector3 ZERO;
 };
 
 class Vector4
 {
+public:
+Vector4();
+Vector4(const Vector4&in);
+Vector4(float, float, float, float);
+Vector4(const Vector3&in, float);
+Vector4(float[]&inout);
 // Methods:
 Vector4 Abs() const;
 float AbsDotProduct(const Vector4&) const;
@@ -13395,6 +14424,11 @@ float z;
 
 class VectorBuffer
 {
+public:
+~VectorBuffer();
+VectorBuffer();
+VectorBuffer(const VectorBuffer&in);
+VectorBuffer(Deserializer@, uint);
 // Methods:
 void Clear();
 Array<uint8> Read(uint);
@@ -13433,7 +14467,9 @@ Vector4 ReadVector4();
 VectorBuffer ReadVectorBuffer(uint);
 void Resize(uint);
 uint Seek(uint);
+uint SeekRelative(int);
 void SetData(Deserializer, uint);
+uint Tell() const;
 uint Write(Array<uint8>);
 bool WriteBool(bool);
 bool WriteBoundingBox(const BoundingBox&);
@@ -13484,6 +14520,8 @@ uint size;
 
 class VertexBuffer
 {
+public:
+VertexBuffer();
 // Methods:
 VectorBuffer GetData() const;
 uint GetElementOffset(VertexElementSemantic, uint8 = 0) const;
@@ -13524,6 +14562,11 @@ int weakRefs;
 
 class VertexElement
 {
+public:
+~VertexElement();
+VertexElement();
+VertexElement(const VertexElement&in);
+VertexElement(VertexElementType, VertexElementSemantic, uint8 index = 0, bool perInstance = false);
 
 // Properties:
 uint8 index;
@@ -13535,6 +14578,9 @@ VertexElementType type;
 
 class View3D
 {
+public:
+View3D();
+View3D(const String&in);
 // Methods:
 void AddChild(UIElement);
 void AddTag(const String&);
@@ -13770,6 +14816,10 @@ int width;
 
 class Viewport
 {
+public:
+Viewport();
+Viewport(Scene&, Camera&, RenderPath& renderPath = null);
+Viewport(Scene&, Camera&, const IntRect&in, RenderPath& renderPath = null);
 // Methods:
 Ray GetScreenRay(int, int) const;
 bool HasSubscribedToEvent(Object, const String&);
@@ -13800,6 +14850,11 @@ int weakRefs;
 
 class WeakHandle
 {
+public:
+~WeakHandle();
+WeakHandle();
+WeakHandle(const WeakHandle&in);
+WeakHandle(RefCounted@);
 // Methods:
 RefCounted Get() const;
 
@@ -13814,6 +14869,9 @@ int weakRefs;
 
 class Window
 {
+public:
+Window();
+Window(const String&in);
 // Methods:
 void AddChild(UIElement);
 void AddTag(const String&);
@@ -14035,6 +15093,10 @@ int width;
 
 class XMLElement
 {
+public:
+~XMLElement();
+XMLElement();
+XMLElement(const XMLElement&in);
 // Methods:
 XMLElement CreateChild(const String&);
 String GetAttribute(const String& = String ( )) const;
@@ -14048,16 +15110,20 @@ Color GetColor(const String&) const;
 double GetDouble(const String&) const;
 float GetFloat(const String&) const;
 int GetInt(const String&) const;
+int64 GetInt64(const String&) const;
 IntRect GetIntRect(const String&) const;
 IntVector2 GetIntVector2(const String&) const;
+IntVector3 GetIntVector3(const String&) const;
 Matrix3 GetMatrix3(const String&) const;
 Matrix3x4 GetMatrix3x4(const String&) const;
 Matrix4 GetMatrix4(const String&) const;
 XMLElement GetNext(const String& = String ( )) const;
+XMLElement GetOrCreateChild(const String&);
 Quaternion GetQuaternion(const String&) const;
 ResourceRef GetResourceRef() const;
 ResourceRefList GetResourceRefList() const;
 uint GetUInt(const String&) const;
+uint64 GetUInt64(const String&) const;
 String GetValue() const;
 Variant GetVariant() const;
 VariantMap GetVariantMap() const;
@@ -14084,8 +15150,10 @@ bool SetColor(const String&, const Color&);
 bool SetDouble(const String&, double);
 bool SetFloat(const String&, float);
 bool SetInt(const String&, int);
+bool SetInt64(const String&, int64);
 bool SetIntRect(const String&, const IntRect&);
 bool SetIntVector2(const String&, const IntVector2&);
+bool SetIntVector3(const String&, const IntVector3&);
 bool SetMatrix3(const String&, const Matrix3&);
 bool SetMatrix3x4(const String&, const Matrix3x4&);
 bool SetMatrix4(const String&, const Matrix4&);
@@ -14093,6 +15161,7 @@ bool SetQuaternion(const String&, const Quaternion&);
 bool SetResourceRef(const String&, const ResourceRef&);
 bool SetResourceRefList(const String&, const ResourceRefList&);
 bool SetUInt(const String&, uint);
+bool SetUInt64(const String&, uint64);
 bool SetValue(const String&);
 bool SetVariant(const Variant&);
 bool SetVariantMap(const VariantMap&);
@@ -14122,9 +15191,13 @@ String value;
 
 class XMLFile
 {
+public:
+XMLFile();
+XMLFile(const String&in);
 // Methods:
 XMLElement CreateRoot(const String&);
 bool FromString(const String&);
+XMLElement GetOrCreateRoot(const String&);
 XMLElement GetRoot(const String& = String ( ));
 bool HasSubscribedToEvent(Object, const String&);
 bool HasSubscribedToEvent(const String&);
@@ -14162,6 +15235,10 @@ int weakRefs;
 
 class XPathQuery
 {
+public:
+~XPathQuery();
+XPathQuery();
+XPathQuery(const String&in, const String&inout arg1 = String ( ));
 // Methods:
 void Bind();
 void Clear();
@@ -14181,6 +15258,10 @@ String query;
 
 class XPathResultSet
 {
+public:
+~XPathResultSet();
+XPathResultSet();
+XPathResultSet(const XPathResultSet&in);
 
 // Properties:
 /* readonly */
@@ -14193,6 +15274,7 @@ uint size;
 
 class Zone
 {
+public:
 // Methods:
 void ApplyAttributes();
 void DrawDebugGeometry(DebugRenderer, bool);
@@ -14496,6 +15578,20 @@ FM_FOCUSABLE,
 FM_FOCUSABLE_DEFOCUSABLE,
 };
 
+enum FontHintLevel
+{
+FONT_HINT_LEVEL_NONE,
+FONT_HINT_LEVEL_LIGHT,
+FONT_HINT_LEVEL_NORMAL,
+};
+
+enum FontType
+{
+FONT_NONE,
+FONT_FREETYPE,
+FONT_BITMAP,
+};
+
 enum HighlightMode
 {
 HM_NEVER,
@@ -14517,6 +15613,24 @@ HTTP_INITIALIZING,
 HTTP_ERROR,
 HTTP_OPEN,
 HTTP_CLOSED,
+};
+
+enum IKAlgorithm
+{
+ONE_BONE,
+TWO_BONE,
+FABRIK,
+};
+
+enum IKFeature
+{
+JOINT_ROTATIONS,
+TARGET_ROTATIONS,
+UPDATE_ORIGINAL_POSE,
+UPDATE_ACTIVE_POSE,
+USE_ORIGINAL_POSE,
+CONSTRAINTS,
+AUTO_SOLVE,
 };
 
 enum InterpMethod
@@ -14738,6 +15852,7 @@ FILTER_NEAREST,
 FILTER_BILINEAR,
 FILTER_TRILINEAR,
 FILTER_ANISOTROPIC,
+FILTER_NEAREST_ANISOTROPIC,
 FILTER_DEFAULT,
 };
 
@@ -14830,6 +15945,7 @@ VAR_VARIANTVECTOR,
 VAR_VARIANTMAP,
 VAR_INTRECT,
 VAR_INTVECTOR2,
+VAR_INTVECTOR3,
 VAR_PTR,
 VAR_MATRIX3,
 VAR_MATRIX3X4,
@@ -14895,6 +16011,7 @@ void ClearDelayedExecute(const String& = String ( ));
 VectorBuffer CompressVectorBuffer(VectorBuffer&);
 float Cos(float);
 uint CountSetBits(uint);
+Object CreateObject(const String&);
 VectorBuffer DecompressVectorBuffer(VectorBuffer&);
 void DelayedExecute(float, bool, const String&, const Array<Variant> = null);
 bool Equals(float, float);
@@ -14915,14 +16032,18 @@ uint GetFloat16Format();
 uint GetFloat32Format();
 uint GetFormat(const String&);
 Variant GetGlobalVar(const String&);
+String GetHostName();
 String GetInternalPath(const String&);
 uint GetLinearDepthFormat();
+String GetLoginName();
 uint GetLuminanceAlphaFormat();
 uint GetLuminanceFormat();
 uint GetMaxBones();
 String GetMiniDumpDir();
 uint GetNumLogicalCPUs();
 uint GetNumPhysicalCPUs();
+String GetOSVersion();
+Array<AttributeInfo> GetObjectAttributeInfos(const String&);
 Array<String> GetObjectCategories();
 Array<String> GetObjectsByCategory(const String&);
 String GetParentPath(const String&);
@@ -14939,6 +16060,9 @@ uint GetRGFloat32Format();
 uint GetRandomSeed();
 uint GetReadableDepthFormat();
 String GetTextureUnitName(TextureUnit);
+uint64 GetTotalMemory();
+VariantType GetVariantTypeFromName(const String&);
+String GetVariantTypeName(VariantType);
 bool HasSubscribedToEvent(Object, const String&);
 bool HasSubscribedToEvent(const String&);
 float InverseLerp(float, float, float);
@@ -14964,7 +16088,9 @@ void Print(const String&, bool = false);
 void Print(const Variant&, bool = false);
 void Print(float, bool = false);
 void Print(int, bool = false);
+void Print(int64, bool = false);
 void Print(uint, bool = false);
+void Print(uint64, bool = false);
 void PrintCallStack(bool = false);
 float Random();
 float Random(float);
@@ -15007,18 +16133,22 @@ Vector2 VectorCeil(const Vector2&);
 Vector3 VectorCeil(const Vector3&);
 Vector4 VectorCeil(const Vector4&);
 IntVector2 VectorCeilToInt(const Vector2&);
+IntVector3 VectorCeilToInt(const Vector3&);
 Vector2 VectorFloor(const Vector2&);
 Vector3 VectorFloor(const Vector3&);
 Vector4 VectorFloor(const Vector4&);
 IntVector2 VectorFloorToInt(const Vector2&);
+IntVector3 VectorFloorToInt(const Vector3&);
 Vector2 VectorLerp(const Vector2&, const Vector2&, const Vector2&);
 Vector3 VectorLerp(const Vector3&, const Vector3&, const Vector3&);
 Vector4 VectorLerp(const Vector4&, const Vector4&, const Vector4&);
 IntVector2 VectorMax(const IntVector2&, const IntVector2&);
+IntVector3 VectorMax(const IntVector3&, const IntVector3&);
 Vector2 VectorMax(const Vector2&, const Vector2&);
 Vector3 VectorMax(const Vector3&, const Vector3&);
 Vector4 VectorMax(const Vector4&, const Vector4&);
 IntVector2 VectorMin(const IntVector2&, const IntVector2&);
+IntVector3 VectorMin(const IntVector3&, const IntVector3&);
 Vector2 VectorMin(const Vector2&, const Vector2&);
 Vector3 VectorMin(const Vector3&, const Vector3&);
 Vector4 VectorMin(const Vector4&, const Vector4&);
@@ -15026,6 +16156,7 @@ Vector2 VectorRound(const Vector2&);
 Vector3 VectorRound(const Vector3&);
 Vector4 VectorRound(const Vector4&);
 IntVector2 VectorRoundToInt(const Vector2&);
+IntVector3 VectorRoundToInt(const Vector3&);
 bool WriteDrawablesToOBJ(Array<Drawable>, File, bool, bool, bool = false);
 
 // Global properties

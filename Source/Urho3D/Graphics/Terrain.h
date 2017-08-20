@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2008-2016 the Urho3D project.
+// Copyright (c) 2008-2017 the Urho3D project.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,6 +22,7 @@
 
 #pragma once
 
+#include "../Container/ArrayPtr.h"
 #include "../Scene/Component.h"
 
 namespace Urho3D
@@ -139,6 +140,8 @@ public:
     Vector3 GetNormal(const Vector3& worldPosition) const;
     /// Convert world position to heightmap pixel position. Note that the internal height data representation is reversed vertically, but in the heightmap image north is at the top.
     IntVector2 WorldToHeightMap(const Vector3& worldPosition) const;
+    /// Convert heightmap pixel position to world position.
+    Vector3 HeightMapToWorld(const IntVector2& pixelPosition) const;
 
     /// Return north neighbor terrain.
     Terrain* GetNorthNeighbor() const { return north_; }

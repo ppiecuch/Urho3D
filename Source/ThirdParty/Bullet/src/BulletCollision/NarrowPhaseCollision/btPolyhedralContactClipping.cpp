@@ -115,7 +115,7 @@ static bool TestSepAxis(const btConvexPolyhedron& hullA, const btConvexPolyhedro
 static int gActualSATPairTests=0;
 
 #define IsAlmostZero(v) \
-	((fabsf(v.x())>1e-6 || fabsf(v.y())>1e-6 || fabsf(v.z())>1e-6)==false)
+	((btFabs(v.x())>1e-6 || btFabs(v.y())>1e-6 || btFabs(v.z())>1e-6)==false)
 
 #ifdef TEST_INTERNAL_OBJECTS
 
@@ -408,9 +408,9 @@ bool btPolyhedralContactClipping::findSeparatingAxis(	const btConvexPolyhedron& 
 	return true;
 }
 
-void	btPolyhedralContactClipping::clipFaceAgainstHull(const btVector3& separatingNormal, const btConvexPolyhedron& hullA,  const btTransform& transA, btVertexArray& worldVertsB1, const btScalar minDist, btScalar maxDist,btDiscreteCollisionDetectorInterface::Result& resultOut)
+void	btPolyhedralContactClipping::clipFaceAgainstHull(const btVector3& separatingNormal, const btConvexPolyhedron& hullA,  const btTransform& transA, btVertexArray& worldVertsB1,btVertexArray& worldVertsB2, const btScalar minDist, btScalar maxDist,btDiscreteCollisionDetectorInterface::Result& resultOut)
 {
-	btVertexArray worldVertsB2;
+	worldVertsB2.resize(0);
 	btVertexArray* pVtxIn = &worldVertsB1;
 	btVertexArray* pVtxOut = &worldVertsB2;
 	pVtxOut->reserve(pVtxIn->size());
@@ -524,7 +524,7 @@ void	btPolyhedralContactClipping::clipFaceAgainstHull(const btVector3& separatin
 
 
 
-void	btPolyhedralContactClipping::clipHullAgainstHull(const btVector3& separatingNormal1, const btConvexPolyhedron& hullA, const btConvexPolyhedron& hullB, const btTransform& transA,const btTransform& transB, const btScalar minDist, btScalar maxDist,btDiscreteCollisionDetectorInterface::Result& resultOut)
+void	btPolyhedralContactClipping::clipHullAgainstHull(const btVector3& separatingNormal1, const btConvexPolyhedron& hullA, const btConvexPolyhedron& hullB, const btTransform& transA,const btTransform& transB, const btScalar minDist, btScalar maxDist,btVertexArray& worldVertsB1,btVertexArray& worldVertsB2,btDiscreteCollisionDetectorInterface::Result& resultOut)
 {
 
 	btVector3 separatingNormal = separatingNormal1.normalized();
@@ -549,7 +549,7 @@ void	btPolyhedralContactClipping::clipHullAgainstHull(const btVector3& separatin
 			}
 		}
 	}
-				btVertexArray worldVertsB1;
+	worldVertsB1.resize(0);
 				{
 					const btFace& polyB = hullB.m_faces[closestFaceB];
 					const int numVertices = polyB.m_indices.size();
@@ -562,6 +562,6 @@ void	btPolyhedralContactClipping::clipHullAgainstHull(const btVector3& separatin
 
 	
 	if (closestFaceB>=0)
-		clipFaceAgainstHull(separatingNormal, hullA, transA,worldVertsB1, minDist, maxDist,resultOut);
+		clipFaceAgainstHull(separatingNormal, hullA, transA,worldVertsB1, worldVertsB2,minDist, maxDist,resultOut);
 
 }

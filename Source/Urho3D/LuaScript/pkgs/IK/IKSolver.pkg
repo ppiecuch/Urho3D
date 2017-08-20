@@ -1,0 +1,42 @@
+$#include "IK/IKSolver.h"
+
+class IKSolver : public Component
+{
+    enum Algorithm
+    {
+        ONE_BONE = 0,
+        TWO_BONE,
+        FABRIK
+    };
+
+    enum Feature
+    {
+        JOINT_ROTATIONS = 0x01,
+        TARGET_ROTATIONS = 0x02,
+        UPDATE_ORIGINAL_POSE = 0x04,
+        UPDATE_ACTIVE_POSE = 0x08,
+        USE_ORIGINAL_POSE = 0x10,
+        CONSTRAINTS = 0x20,
+        AUTO_SOLVE = 0x40
+    };
+
+    bool GetFeature(Feature feature) const;
+    void SetFeature(Feature feature, bool enable);
+
+    void RebuildData();
+    void RecalculateSegmentLengths();
+    void CalculateJointRotations();
+    void Solve();
+
+    void ApplyOriginalPoseToScene();
+    void ApplySceneToOriginalPose();
+    void ApplyActivePoseToScene();
+    void ApplySceneToActivePose();
+    void ApplyOriginalPoseToActivePose();
+
+    void DrawDebugGeometry(bool depthTest);
+
+    tolua_property__get_set Algorithm algorithm;
+    tolua_property__get_set unsigned maximumIterations;
+    tolua_property__get_set float tolerance;
+};
