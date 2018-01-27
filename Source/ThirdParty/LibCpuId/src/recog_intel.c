@@ -25,13 +25,14 @@
  */
 #include <string.h>
 #include <ctype.h>
+
+#define NA      NA_INTEL
+#define NO_CODE NO_CODE_INTEL
+
 #include "libcpuid.h"
 #include "libcpuid_util.h"
 #include "libcpuid_internal.h"
 #include "recog_intel.h"
-
-#define NA      NA_INTEL
-#define NO_CODE NO_CODE_INTEL
 
 const struct intel_bcode_str { intel_code_t code; char *str; } intel_bcode_str[] = {
 	#define CODE(x) { x, #x }

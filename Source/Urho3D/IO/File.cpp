@@ -70,7 +70,7 @@ const char* APK = "/apk/";
 File::File(Context* context) :
     Object(context),
     mode_(FILE_READ),
-    handle_(0),
+    handle_(nullptr),
 #if defined(__ANDROID__) || defined(QT_CORE_LIB)
     assetHandle_(0),
 #endif
@@ -87,7 +87,7 @@ File::File(Context* context) :
 File::File(Context* context, const String& fileName, FileMode mode) :
     Object(context),
     mode_(FILE_READ),
-    handle_(0),
+    handle_(nullptr),
 #if defined(__ANDROID__) || defined(QT_CORE_LIB)
     assetHandle_(0),
 #endif
@@ -105,7 +105,7 @@ File::File(Context* context, const String& fileName, FileMode mode) :
 File::File(Context* context, PackageFile* package, const String& fileName) :
     Object(context),
     mode_(FILE_READ),
-    handle_(0),
+    handle_(nullptr),
 #if defined(__ANDROID__) || defined(QT_CORE_LIB)
     assetHandle_(0),
 #endif
@@ -399,7 +399,7 @@ void File::Close()
     if (handle_)
     {
         fclose((FILE*)handle_);
-        handle_ = 0;
+        handle_ = nullptr;
         position_ = 0;
         size_ = 0;
         offset_ = 0;
@@ -423,7 +423,7 @@ bool File::IsOpen() const
 #ifdef __ANDROID__
     return handle_ != 0 || assetHandle_ != 0;
 #else
-    return handle_ != 0;
+    return handle_ != nullptr;
 #endif
 }
 

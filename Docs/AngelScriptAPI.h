@@ -629,6 +629,7 @@ void Sort();
 void Sort(uint, uint);
 void SortReverse();
 void SortReverse(uint, uint);
+bool Swap(Array<T>&);
 
 // Properties:
 /* readonly */
@@ -647,11 +648,10 @@ AttributeInfo(const AttributeInfo&in);
 Variant defaultValue;
 /* readonly */
 Array<String> enumNames;
+VariantMap metadata;
 uint mode;
 String name;
 VariantType type;
-/* readonly */
-Array<String> variantStructureElementNames;
 };
 
 class Audio
@@ -1177,6 +1177,7 @@ void SetAttributeAnimationSpeed(const String&, float);
 void SetAttributeAnimationTime(const String&, float);
 void SetAttributeAnimationWrapMode(const String&, WrapMode);
 void SetDeepEnabled(bool);
+void SetDisabledOffset(int, int);
 void SetEnabledRecursive(bool);
 void SetFixedHeight(int);
 void SetFixedSize(int, int);
@@ -1231,6 +1232,7 @@ IntRect combinedScreenRect;
 XMLFile defaultStyle;
 /* readonly */
 float derivedOpacity;
+IntVector2 disabledOffset;
 /* readonly */
 uint dragButtonCombo;
 /* readonly */
@@ -4700,6 +4702,7 @@ void SetAttributeAnimationSpeed(const String&, float);
 void SetAttributeAnimationTime(const String&, float);
 void SetAttributeAnimationWrapMode(const String&, WrapMode);
 void SetDeepEnabled(bool);
+void SetDisabledOffset(int, int);
 void SetEnabledRecursive(bool);
 void SetFixedHeight(int);
 void SetFixedSize(int, int);
@@ -4759,6 +4762,7 @@ IntRect combinedScreenRect;
 XMLFile defaultStyle;
 /* readonly */
 float derivedOpacity;
+IntVector2 disabledOffset;
 /* readonly */
 uint dragButtonCombo;
 /* readonly */
@@ -5907,9 +5911,12 @@ public:
 IntRect();
 IntRect(const IntRect&in);
 IntRect(int, int, int, int);
+IntRect(const IntVector2&in, const IntVector2&in);
 IntRect(int[]&inout);
 // Methods:
+int Clip(const IntRect&);
 Intersection IsInside(const IntVector2&) const;
+int Merge(const IntRect&);
 
 // Properties:
 int bottom;
@@ -6474,8 +6481,10 @@ void ChangeSelection(int, bool);
 void ClearSelection();
 void CopySelectedItemsToClipboard();
 UIElement CreateChild(const String&, const String& = String ( ), uint = M_MAX_UNSIGNED);
+void DisableInternalLayoutUpdate();
 void DisableLayoutUpdate();
 IntVector2 ElementToScreen(const IntVector2&);
+void EnableInternalLayoutUpdate();
 void EnableLayoutUpdate();
 void Expand(uint, bool, bool = false);
 uint FindChild(UIElement) const;
@@ -6567,6 +6576,7 @@ bool SetStyleAuto(XMLFile = null);
 void SetViewPosition(int, int);
 void ToggleExpand(uint, bool = false);
 void ToggleSelection(uint);
+void UpdateInternalLayout();
 void UpdateLayout();
 const Variant& GetVar(const StringHash&);
 
@@ -7062,6 +7072,7 @@ void SetAttributeAnimationSpeed(const String&, float);
 void SetAttributeAnimationTime(const String&, float);
 void SetAttributeAnimationWrapMode(const String&, WrapMode);
 void SetDeepEnabled(bool);
+void SetDisabledOffset(int, int);
 void SetEnabledRecursive(bool);
 void SetFixedHeight(int);
 void SetFixedSize(int, int);
@@ -7121,6 +7132,7 @@ IntRect combinedScreenRect;
 XMLFile defaultStyle;
 /* readonly */
 float derivedOpacity;
+IntVector2 disabledOffset;
 /* readonly */
 uint dragButtonCombo;
 /* readonly */
@@ -9343,6 +9355,7 @@ class Renderer
 public:
 // Methods:
 void DrawDebugGeometry(bool) const;
+Viewport GetViewportForScene(Scene, uint);
 bool HasSubscribedToEvent(Object, const String&);
 bool HasSubscribedToEvent(const String&);
 void ReloadShaders() const;
@@ -12625,7 +12638,7 @@ void SetFixedHeight(int);
 void SetFixedSize(int, int);
 void SetFixedWidth(int);
 bool SetFont(Font, float);
-bool SetFont(const String&, int);
+bool SetFont(const String&, float);
 void SetInterceptNetworkUpdate(const String&, bool);
 void SetLayout(LayoutMode, int = 0, const IntRect& = IntRect ( 0 , 0 , 0 , 0 ));
 void SetMaxAnchor(float, float);
@@ -13909,6 +13922,79 @@ String typeName;
 bool useMutableGlyphs;
 bool useScreenKeyboard;
 bool useSystemClipboard;
+/* readonly */
+int weakRefs;
+};
+
+class UIComponent
+{
+public:
+// Methods:
+void ApplyAttributes();
+Variant GetAttribute(const String&) const;
+ValueAnimation GetAttributeAnimation(const String&) const;
+float GetAttributeAnimationSpeed(const String&) const;
+float GetAttributeAnimationTime(const String&) const;
+WrapMode GetAttributeAnimationWrapMode(const String&) const;
+Variant GetAttributeDefault(const String&) const;
+bool GetInterceptNetworkUpdate(const String&) const;
+bool HasSubscribedToEvent(Object, const String&);
+bool HasSubscribedToEvent(const String&);
+bool Load(File, bool = false);
+bool Load(VectorBuffer&, bool = false);
+bool LoadJSON(const JSONValue&, bool = false);
+bool LoadXML(const XMLElement&, bool = false);
+void MarkNetworkUpdate() const;
+void Remove();
+void RemoveAttributeAnimation(const String&);
+void RemoveInstanceDefault();
+void RemoveObjectAnimation();
+void ResetToDefault();
+bool Save(File) const;
+bool Save(VectorBuffer&) const;
+bool SaveJSON(JSONValue&) const;
+bool SaveXML(XMLElement&) const;
+void SendEvent(const String&, VariantMap& = VariantMap ( ));
+void SetAnimationTime(float);
+bool SetAttribute(const String&, const Variant&);
+void SetAttributeAnimation(const String&, ValueAnimation, WrapMode = WM_LOOP, float = 1.0f);
+void SetAttributeAnimationSpeed(const String&, float);
+void SetAttributeAnimationTime(const String&, float);
+void SetAttributeAnimationWrapMode(const String&, WrapMode);
+void SetInterceptNetworkUpdate(const String&, bool);
+
+// Properties:
+bool animationEnabled;
+/* readonly */
+Array<Variant> attributeDefaults;
+/* readonly */
+Array<AttributeInfo> attributeInfos;
+Array<Variant> attributes;
+/* readonly */
+String category;
+bool enabled;
+/* readonly */
+bool enabledEffective;
+/* readonly */
+uint id;
+/* readonly */
+Material material;
+/* readonly */
+Node node;
+/* readonly */
+uint numAttributes;
+ObjectAnimation objectAnimation;
+/* readonly */
+int refs;
+/* readonly */
+UIElement root;
+bool temporary;
+/* readonly */
+Texture2D texture;
+/* readonly */
+StringHash type;
+/* readonly */
+String typeName;
 /* readonly */
 int weakRefs;
 };

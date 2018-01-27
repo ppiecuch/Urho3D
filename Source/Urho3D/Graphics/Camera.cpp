@@ -40,7 +40,7 @@ static const char* camFillModeNames[] =
     "Solid",
     "Wireframe",
     "Point",
-    0
+    nullptr
 };
 
 static const Matrix4 flipMatrix(

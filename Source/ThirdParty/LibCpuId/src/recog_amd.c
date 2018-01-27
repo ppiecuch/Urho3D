@@ -27,13 +27,14 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+
+#define NA      NA_AMD
+#define NO_CODE NO_CODE_AMD
+
 #include "libcpuid.h"
 #include "libcpuid_util.h"
 #include "libcpuid_internal.h"
 #include "recog_amd.h"
-
-#define NA      NA_AMD
-#define NO_CODE NO_CODE_AMD
 
 const struct amd_code_str { amd_code_t code; char *str; } amd_code_str[] = {
 	#define CODE(x) { x, #x }

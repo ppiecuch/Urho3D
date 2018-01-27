@@ -129,7 +129,6 @@ set (CMAKE_EXE_LINKER_FLAGS "${INDIRECT_DEPS_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKE
 
 # Define all supported build options
 include (CMakeDependentOption)
-option (URHO3D_C++11 "Enable C++11 standard")
 cmake_dependent_option (IOS "Setup build for iOS platform" FALSE "XCODE" FALSE)
 cmake_dependent_option (TVOS "Setup build for tvOS platform" FALSE "XCODE" FALSE)
 cmake_dependent_option (URHO3D_64BIT "Enable 64-bit build, the default is set based on the native ABI of the chosen compiler toolchain" "${NATIVE_64BIT}" "NOT MSVC AND NOT ANDROID AND NOT (ARM AND NOT IOS) AND NOT WEB AND NOT POWERPC" "${NATIVE_64BIT}")     # Intentionally only enable the option for iOS but not for tvOS as the latter is 64-bit only
@@ -172,6 +171,7 @@ if (CMAKE_PROJECT_NAME STREQUAL Urho3D)
             # Certain MinGW versions fail to compile SSE code. This is the initial guess for known "bad" version range, and can be tightened later
             message (WARNING "Disabling SSE by default due to MinGW version. It is recommended to upgrade to MinGW with GCC >= 4.9.1. "
                 "You can also try to re-enable SSE with CMake option -DURHO3D_SSE=1, but this may result in compile errors.")
+            set (HAVE_SSE2 FALSE)
         endif ()
     endif ()
     if (X86 OR WEB)
@@ -375,7 +375,6 @@ if (URHO3D_CLANG_TOOLS OR URHO3D_BINDINGS)
 endif ()
 if (URHO3D_CLANG_TOOLS)
     # Require C++11 standard and no precompiled-header
-    set (URHO3D_C++11 1)
     set (URHO3D_PCH 0)
     set (URHO3D_LIB_TYPE SHARED)
     # Set build options that would maximise the AST of Urho3D library
@@ -423,15 +422,8 @@ if (NOT URHO3D_LIB_TYPE STREQUAL SHARED AND NOT URHO3D_LIB_TYPE STREQUAL MODULE)
     endif ()
 endif ()
 
-# Force C++11 standard (required by the generic bindings generation) if using AngelScript on Web and 64-bit ARM platforms
-if (URHO3D_ANGELSCRIPT AND (EMSCRIPTEN OR (ARM AND URHO3D_64BIT)))
-    set (URHO3D_C++11 1)
-endif ()
-
-# Force C++11 standard (required by nanodbc library) if using ODBC
 if (URHO3D_DATABASE_ODBC)
     find_package (ODBC REQUIRED)
-    set (URHO3D_C++11 1)
 endif ()
 
 # Define preprocessor macros (for building the Urho3D library) based on the configured build options
@@ -475,30 +467,27 @@ if (WIN32 AND NOT CMAKE_PROJECT_NAME MATCHES ^Urho3D-ExternalProject-)
 endif ()
 
 # Platform and compiler specific options
-if (URHO3D_C++11)
-    add_definitions (-DURHO3D_CXX11)   # Note the define is NOT 'URHO3D_C++11'!
-    if (CMAKE_CXX_COMPILER_ID MATCHES GNU)
-        # Use gnu++11/gnu++0x instead of c++11/c++0x as the latter does not work as expected when cross compiling
-        if (VERIFIED_SUPPORTED_STANDARD)
-            set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=${VERIFIED_SUPPORTED_STANDARD}")
-        else ()
-            foreach (STANDARD gnu++11 gnu++0x)  # Fallback to gnu++0x on older GCC version
-                execute_process (COMMAND ${CMAKE_COMMAND} -E echo COMMAND ${CMAKE_CXX_COMPILER} -std=${STANDARD} -E - RESULT_VARIABLE GCC_EXIT_CODE OUTPUT_QUIET ERROR_QUIET)
-                if (GCC_EXIT_CODE EQUAL 0)
-                    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=${STANDARD}")
-                    set (VERIFIED_SUPPORTED_STANDARD ${STANDARD} CACHE INTERNAL "GNU extension of C++11 standard that is verified to be supported by the chosen compiler")
-                    break ()
-                endif ()
-            endforeach ()
-            if (NOT GCC_EXIT_CODE EQUAL 0)
-                message (FATAL_ERROR "Your GCC version ${CMAKE_CXX_COMPILER_VERSION} is too old to enable C++11 standard")
+if (CMAKE_CXX_COMPILER_ID MATCHES GNU)
+    # Use gnu++11/gnu++0x instead of c++11/c++0x as the latter does not work as expected when cross compiling
+    if (VERIFIED_SUPPORTED_STANDARD)
+        set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=${VERIFIED_SUPPORTED_STANDARD}")
+    else ()
+        foreach (STANDARD gnu++11 gnu++0x)  # Fallback to gnu++0x on older GCC version
+            execute_process (COMMAND ${CMAKE_COMMAND} -E echo COMMAND ${CMAKE_CXX_COMPILER} -std=${STANDARD} -E - RESULT_VARIABLE GCC_EXIT_CODE OUTPUT_QUIET ERROR_QUIET)
+            if (GCC_EXIT_CODE EQUAL 0)
+                set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=${STANDARD}")
+                set (VERIFIED_SUPPORTED_STANDARD ${STANDARD} CACHE INTERNAL "GNU extension of C++11 standard that is verified to be supported by the chosen compiler")
+                break ()
             endif ()
+        endforeach ()
+        if (NOT GCC_EXIT_CODE EQUAL 0)
+            message (FATAL_ERROR "Your GCC version ${CMAKE_CXX_COMPILER_VERSION} is too old to enable C++11 standard")
         endif ()
-    elseif (CMAKE_CXX_COMPILER_ID MATCHES Clang)
-        set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-    elseif (MSVC80)
-        message (FATAL_ERROR "Your MSVC version is too told to enable C++11 standard")
     endif ()
+elseif (CMAKE_CXX_COMPILER_ID MATCHES Clang)
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+elseif (MSVC80)
+    message (FATAL_ERROR "Your MSVC version is too told to enable C++11 standard")
 endif ()
 if (APPLE)
     if (IOS)
@@ -704,8 +693,8 @@ else ()
                     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mstackrealign")
                     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mstackrealign")
                 else ()
-                    set (CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -fno-tree-loop-vectorize -fno-tree-slp-vectorize -fno-tree-vectorize")
-                    set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fno-tree-loop-vectorize -fno-tree-slp-vectorize -fno-tree-vectorize")
+                    set (CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -fno-tree-slp-vectorize -fno-tree-vectorize")
+                    set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fno-tree-slp-vectorize -fno-tree-vectorize")
                 endif ()
             endif ()
         else ()
