@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2008-2017 the Urho3D project.
+// Copyright (c) 2008-2018 the Urho3D project.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -30,13 +30,13 @@
 namespace Urho3D
 {
 
-const Variant Variant::EMPTY;
-const PODVector<unsigned char> Variant::emptyBuffer;
-const ResourceRef Variant::emptyResourceRef;
-const ResourceRefList Variant::emptyResourceRefList;
+const Variant Variant::EMPTY { };
+const PODVector<unsigned char> Variant::emptyBuffer { };
+const ResourceRef Variant::emptyResourceRef { };
+const ResourceRefList Variant::emptyResourceRefList { };
 const VariantMap Variant::emptyVariantMap;
-const VariantVector Variant::emptyVariantVector;
-const StringVector Variant::emptyStringVector;
+const VariantVector Variant::emptyVariantVector { };
+const StringVector Variant::emptyStringVector { };
 
 static const char* varTypeNames[] =
 {
@@ -67,12 +67,12 @@ static const char* varTypeNames[] =
     "Rect",
     "IntVector3",
     "Int64",
-    "CustomPtr",
-    "Custom",
+    "CustomHeap",
+    "CustomStack",
     nullptr
 };
 
-static_assert(sizeof(varTypeNames) / sizeof(const char*) == MAX_VAR_TYPES + 1, "Variant type name array is out-of-date");
+static_assert(sizeof(varTypeNames) / sizeof(const char*) == (size_t)MAX_VAR_TYPES + 1, "Variant type name array is out-of-date");
 
 Variant& Variant::operator =(const Variant& rhs)
 {

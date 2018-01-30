@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2008-2017 the Urho3D project.
+# Copyright (c) 2008-2018 the Urho3D project.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -54,7 +54,7 @@ task :cmake do
   platform = 'native'
   build_options = ''
   # TODO: Need to find a way to automatically populate the array with all the Urho3D supported build options, at the moment it only contains those being used in CI
-  ['URHO3D_64BIT', 'URHO3D_LIB_TYPE', 'URHO3D_STATIC_RUNTIME', 'URHO3D_PCH', 'URHO3D_BINDINGS', 'URHO3D_OPENGL', 'URHO3D_D3D11', 'URHO3D_TESTING', 'URHO3D_TEST_TIMEOUT', 'URHO3D_UPDATE_SOURCE_TREE', 'URHO3D_TOOLS', 'URHO3D_DEPLOYMENT_TARGET', 'URHO3D_USE_LIB64_RPM', 'CMAKE_BUILD_TYPE', 'CMAKE_OSX_DEPLOYMENT_TARGET', 'IOS', 'IPHONEOS_DEPLOYMENT_TARGET', 'TVOS', 'APPLETVOS_DEPLOYMENT_TARGET', 'WIN32', 'MINGW', 'DIRECTX_INC_SEARCH_PATHS', 'DIRECTX_LIB_SEARCH_PATHS', 'ANDROID', 'ANDROID_ABI', 'ANDROID_NATIVE_API_LEVEL', 'ANDROID_TOOLCHAIN_NAME', 'RPI', 'RPI_ABI', 'ARM', 'ARM_ABI_FLAGS', 'WEB', 'EMSCRIPTEN_SHARE_DATA', 'EMSCRIPTEN_WASM', 'EMSCRIPTEN_EMRUN_BROWSER'].each { |var|
+  ['URHO3D_64BIT', 'URHO3D_LIB_TYPE', 'URHO3D_STATIC_RUNTIME', 'URHO3D_PCH', 'URHO3D_LINT', 'URHO3D_BINDINGS', 'URHO3D_OPENGL', 'URHO3D_D3D11', 'URHO3D_TESTING', 'URHO3D_TEST_TIMEOUT', 'URHO3D_UPDATE_SOURCE_TREE', 'URHO3D_TOOLS', 'URHO3D_DEPLOYMENT_TARGET', 'URHO3D_USE_LIB64_RPM', 'CMAKE_BUILD_TYPE', 'CMAKE_OSX_DEPLOYMENT_TARGET', 'IOS', 'IPHONEOS_DEPLOYMENT_TARGET', 'TVOS', 'APPLETVOS_DEPLOYMENT_TARGET', 'WIN32', 'MINGW', 'DIRECTX_INC_SEARCH_PATHS', 'DIRECTX_LIB_SEARCH_PATHS', 'ANDROID', 'ANDROID_ABI', 'ANDROID_NATIVE_API_LEVEL', 'ANDROID_TOOLCHAIN_NAME', 'RPI', 'RPI_ABI', 'ARM', 'ARM_ABI_FLAGS', 'WEB', 'EMSCRIPTEN_SHARE_DATA', 'EMSCRIPTEN_WASM', 'EMSCRIPTEN_EMRUN_BROWSER'].each { |var|
     ARGV << "#{var}=\"#{ENV[var]}\"" if ENV[var] && !ARGV.find { |arg| /#{var}=/ =~ arg }
   }
   ARGV.each { |option|
@@ -62,7 +62,7 @@ task :cmake do
     case option
     when 'cmake', 'generic'
       # do nothing
-    when 'clean', 'codeblocks', 'codelite', 'eclipse', 'ninja', 'vs2013', 'vs2015', 'vs2017', 'xcode'
+    when 'clean', 'codeblocks', 'codelite', 'eclipse', 'ninja', 'vs2015', 'vs2017', 'xcode'
       script = "cmake_#{option}" unless script == 'cmake_clean'
     when 'android', 'arm', 'ios', 'tvos', 'mingw', 'rpi', 'web'
       platform = option
@@ -103,7 +103,7 @@ task :make do
   ARGV.each { |option|
     task option.to_sym do ; end; Rake::Task[option].clear   # No-op hack
     case option
-    when 'codeblocks', 'codelite', 'eclipse', 'generic', 'make', 'ninja', 'vs2013', 'vs2015', 'vs2017', 'xcode'
+    when 'codeblocks', 'codelite', 'eclipse', 'generic', 'make', 'ninja', 'vs2015', 'vs2017', 'xcode'
       # do nothing
     when 'android', 'arm', 'ios', 'tvos', 'mingw', 'rpi', 'web'
       platform = option
@@ -349,13 +349,13 @@ task :ci do
   # Currently we don't have the infra to test run all the platforms; also skip when doing packaging build due to time constraint
   ENV['URHO3D_TESTING'] = '1' if (((ENV['LINUX'] && !ENV['URHO3D_64BIT']) || (ENV['OSX'] && !ENV['IOS'] && !ENV['TVOS']) || ENV['APPVEYOR']) && !ENV['PACKAGE_UPLOAD']) || ENV['WEB']
   # When not explicitly specified then use generic generator
-  generator = ENV['XCODE'] ? 'xcode' : (ENV['APPVEYOR'] && !ENV['MINGW'] ? 'vs2015' : '')
+  generator = ENV['XCODE'] ? 'xcode' : (ENV['APPVEYOR'] && !ENV['MINGW'] ? 'vs2017' : '')
   # LuaJIT on MinGW build is not possible on Travis-CI with Ubuntu 14.04 LTS still as its GCC cross-compiler does not have native exception handling
   # LuaJIT on Web platform is not possible
   jit = (ENV['WIN32'] && ENV['TRAVIS']) || ENV['WEB'] ? '' : 'JIT=1 URHO3D_LUAJIT_AMALG='
   system "cp -rp #{ENV['HOME']}/initial-build-tree #{ENV['build_tree']}" if ENV['OSX'] && ENV['CI'] && File.exist?("#{ENV['HOME']}/initial-build-tree/CMakeCache.txt")
   system "rake cmake #{generator} URHO3D_LUA#{jit}=1 URHO3D_DATABASE_SQLITE=1 URHO3D_EXTRAS=1" or abort 'Failed to configure Urho3D library build'
-  system "cp -rp #{ENV['build_tree']}/* #{ENV['HOME']}/initial-build-tree && rm -rf #{ENV['HOME']}/initial-build-tree/{bin,include}" if ENV['OSX'] && ENV['CI']
+  system "cp -rp #{ENV['build_tree']}/* #{ENV['HOME']}/initial-build-tree 2>/dev/null && rm -rf #{ENV['HOME']}/initial-build-tree/{bin,include} 2>/dev/null" if ENV['OSX'] && ENV['CI']
   next if timeup    # Measure the CMake configuration overhead
   if ENV['AVD'] && !ENV['PACKAGE_UPLOAD']   # Skip APK test run when packaging
     # Prepare a new AVD in another process to avoid busy waiting
@@ -367,9 +367,23 @@ task :ci do
     system 'rake ci_push_bindings' or abort
     next
   end
-  if !wait_for_block { Thread.current[:subcommand_to_kill] = 'xcodebuild'; system 'rake make' }
+  redirect = '2>/tmp/lint.err' if ENV['URHO3D_LINT']
+  if !wait_for_block { Thread.current[:subcommand_to_kill] = 'xcodebuild'; system "rake make #{redirect}" }
     abort 'Failed to build Urho3D library' unless File.exists?('already_timeup.log')
     $stderr.puts "Skipped the rest of the CI processes due to insufficient time"
+    next
+  end
+  if ENV['URHO3D_LINT']
+    lint_err = File.read('/tmp/lint.err')
+    puts "\nLinter result:\n\n#{lint_err}\n"; $stdout.flush
+    # Exclude ThirdParty and generated code
+    filtered_lint_err = lint_err.scan(/(.+:\d+:\d+:.+\[.+\])/).flatten.select { |it| it =~ /\[\w+-.+\]/ }.reject { |it| it =~ /ThirdParty|generated|HashMap\.h.+?clang-analyzer-core.CallAndMessag/ }
+    unless filtered_lint_err.empty?
+      puts "New linter error(s) found:\n\n"
+      filtered_lint_err.each { |it| puts it }
+      puts; $stdout.flush
+      abort 'Failed to pass linter checks'
+    end
     next
   end
   if ENV['URHO3D_TESTING'] && !ENV['WEB'] && !timeup
@@ -381,7 +395,7 @@ task :ci do
     test = ''
   end
   # Skip scaffolding test when time up or packaging for iOS, tvOS, and Web platform
-  unless ENV['CI'] && (ENV['IOS'] || ENV['TVOS'] || ENV['WEB']) && ENV['PACKAGE_UPLOAD'] || ENV['XCODE_64BIT_ONLY'] || timeup
+  unless ENV['CI'] && (ENV['IOS'] || ENV['TVOS'] || ENV['WEB']) && ENV['PACKAGE_UPLOAD'] || timeup
     # Staged-install Urho3D SDK when on Travis-CI; normal install when on AppVeyor
     ENV['DESTDIR'] = ENV['HOME'] unless ENV['APPVEYOR']
     if !wait_for_block("Installing Urho3D SDK to #{ENV['DESTDIR'] ? "#{ENV['DESTDIR']}/usr/local" : 'default system-wide location'}...") { Thread.current[:subcommand_to_kill] = 'xcodebuild'; system "rake make target=install >#{ENV['OS'] ? 'nul' : '/dev/null'}" }
