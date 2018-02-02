@@ -5793,6 +5793,8 @@ Methods:
 - void SetSnapThreshold(float threshold)
 - void SetAsyncLoadingMs(int ms)
 - Node* GetNode(unsigned id) const
+- Component* GetComponent(unsigned id) const
+- bool IsReplicatedID(unsigned id)
 - bool IsUpdateEnabled() const
 - bool IsAsyncLoading() const
 - float GetAsyncProgress() const
@@ -7042,6 +7044,15 @@ Properties:
 
 <a name="Class_TmxFile2D"></a>
 ### TmxFile2D : Resource
+
+Methods:
+
+- void SetSpriteTextureEdgeOffset(float offset)
+- float GetSpriteTextureEdgeOffset() const
+
+Properties:
+
+- float edgeOffset
 
 <a name="Class_ToolTip"></a>
 ### ToolTip : UIElement
