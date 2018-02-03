@@ -84,7 +84,7 @@ void Constraint::RegisterObject(Context* context)
     context->RegisterFactory<Constraint>(PHYSICS_CATEGORY);
 
     URHO3D_ACCESSOR_ATTRIBUTE("Is Enabled", IsEnabled, SetEnabled, bool, true, AM_DEFAULT);
-    URHO3D_ENUM_ATTRIBUTE_EX("Constraint Type", constraintType_, MarkConstraintDirty, typeNames, CONSTRAINT_POINT, AM_DEFAULT);
+    URHO3D_ENUM_ATTRIBUTE_EX("Constraint Type", constraintType_, MarkConstraintDirty, constrTypeNames, CONSTRAINT_POINT, AM_DEFAULT);
     URHO3D_ATTRIBUTE_EX("Position", Vector3, position_, AdjustOtherBodyPosition, Vector3::ZERO, AM_DEFAULT);
     URHO3D_ATTRIBUTE_EX("Rotation", Quaternion, rotation_, MarkFramesDirty, Quaternion::IDENTITY, AM_DEFAULT);
     URHO3D_ATTRIBUTE_EX("Other Body Position", Vector3, otherPosition_, MarkFramesDirty, Vector3::ZERO, AM_DEFAULT);

@@ -71,8 +71,8 @@ void Zone::RegisterObject(Context* context)
     context->RegisterFactory<Zone>(SCENE_CATEGORY);
 
     URHO3D_ACCESSOR_ATTRIBUTE("Is Enabled", IsEnabled, SetEnabled, bool, true, AM_DEFAULT);
-    URHO3D_ATTRIBUTE_EX("Bounding Box Min", Vector3, boundingBox_.min_, MarkNodeDirty, DEFAULT_BOUNDING_BOX_MIN, AM_DEFAULT);
-    URHO3D_ATTRIBUTE_EX("Bounding Box Max", Vector3, boundingBox_.max_, MarkNodeDirty, DEFAULT_BOUNDING_BOX_MAX, AM_DEFAULT);
+    URHO3D_ATTRIBUTE_EX("Bounding Box Min", Vector3, boundingBox_.min_, MarkNodeDirty, ZONE_DEFAULT_BOUNDING_BOX_MIN, AM_DEFAULT);
+    URHO3D_ATTRIBUTE_EX("Bounding Box Max", Vector3, boundingBox_.max_, MarkNodeDirty, ZONE_DEFAULT_BOUNDING_BOX_MAX, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Ambient Color", Color, ambientColor_, DEFAULT_AMBIENT_COLOR, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Fog Color", Color, fogColor_, DEFAULT_FOG_COLOR, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Fog Start", float, fogStart_, DEFAULT_FOG_START, AM_DEFAULT);

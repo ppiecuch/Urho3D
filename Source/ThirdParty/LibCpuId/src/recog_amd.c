@@ -28,9 +28,6 @@
 #include <string.h>
 #include <ctype.h>
 
-#define NA      NA_AMD
-#define NO_CODE NO_CODE_AMD
-
 #include "libcpuid.h"
 #include "libcpuid_util.h"
 #include "libcpuid_internal.h"

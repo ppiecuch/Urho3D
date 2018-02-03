@@ -26,9 +26,6 @@
 #include <string.h>
 #include <ctype.h>
 
-#define NA      NA_INTEL
-#define NO_CODE NO_CODE_INTEL
-
 #include "libcpuid.h"
 #include "libcpuid_util.h"
 #include "libcpuid_internal.h"

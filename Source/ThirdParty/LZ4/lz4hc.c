@@ -248,7 +248,7 @@ FORCE_INLINE int LZ4HC_InsertAndGetWiderMatch (
 }
 
 #ifndef LZ4C_RELOAD
-typedef enum { noLimit = 0, limitOutput = 1 } limitedOutput_directive;
+typedef enum { notLimited = 0, limitedOutput = 1 } limitedOutput_directive;
 #endif
 
 #define LZ4HC_DEBUG 0
@@ -527,9 +527,9 @@ int LZ4_compress_HC_extStateHC (void* state, const char* src, char* dst, int src
     if (((size_t)(state)&(sizeof(void*)-1)) != 0) return 0;   /* Error : state is not aligned for pointers (32 or 64 bits) */
     LZ4HC_init (ctx, (const BYTE*)src);
     if (maxDstSize < LZ4_compressBound(srcSize))
-        return LZ4HC_compress_generic (ctx, src, dst, srcSize, maxDstSize, compressionLevel, limitOutput);
+        return LZ4HC_compress_generic (ctx, src, dst, srcSize, maxDstSize, compressionLevel, limitedOutput);
     else
-        return LZ4HC_compress_generic (ctx, src, dst, srcSize, maxDstSize, compressionLevel, noLimit);
+        return LZ4HC_compress_generic (ctx, src, dst, srcSize, maxDstSize, compressionLevel, notLimited);
 }
 
 int LZ4_compress_HC(const char* src, char* dst, int srcSize, int maxDstSize, int compressionLevel)
@@ -636,9 +636,9 @@ static int LZ4_compressHC_continue_generic (LZ4_streamHC_t* LZ4_streamHCPtr,
 int LZ4_compress_HC_continue (LZ4_streamHC_t* LZ4_streamHCPtr, const char* source, char* dest, int inputSize, int maxOutputSize)
 {
     if (maxOutputSize < LZ4_compressBound(inputSize))
-        return LZ4_compressHC_continue_generic (LZ4_streamHCPtr, source, dest, inputSize, maxOutputSize, limitOutput);
+        return LZ4_compressHC_continue_generic (LZ4_streamHCPtr, source, dest, inputSize, maxOutputSize, limitedOutput);
     else
-        return LZ4_compressHC_continue_generic (LZ4_streamHCPtr, source, dest, inputSize, maxOutputSize, noLimit);
+        return LZ4_compressHC_continue_generic (LZ4_streamHCPtr, source, dest, inputSize, maxOutputSize, notLimited);
 }
 
 
@@ -705,12 +705,12 @@ int LZ4_freeHC (void* LZ4HC_Data) { FREEMEM(LZ4HC_Data); return 0; }
 
 int LZ4_compressHC2_continue (void* LZ4HC_Data, const char* source, char* dest, int inputSize, int compressionLevel)
 {
-    return LZ4HC_compress_generic (&((LZ4_streamHC_t*)LZ4HC_Data)->internal_donotuse, source, dest, inputSize, 0, compressionLevel, noLimit);
+    return LZ4HC_compress_generic (&((LZ4_streamHC_t*)LZ4HC_Data)->internal_donotuse, source, dest, inputSize, 0, compressionLevel, notLimited);
 }
 
 int LZ4_compressHC2_limitedOutput_continue (void* LZ4HC_Data, const char* source, char* dest, int inputSize, int maxOutputSize, int compressionLevel)
 {
-    return LZ4HC_compress_generic (&((LZ4_streamHC_t*)LZ4HC_Data)->internal_donotuse, source, dest, inputSize, maxOutputSize, compressionLevel, limitOutput);
+    return LZ4HC_compress_generic (&((LZ4_streamHC_t*)LZ4HC_Data)->internal_donotuse, source, dest, inputSize, maxOutputSize, compressionLevel, limitedOutput);
 }
 
 char* LZ4_slideInputBufferHC(void* LZ4HC_Data)

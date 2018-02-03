@@ -1,3 +1,6 @@
+#ifndef _solver_MSD_h_
+#define _solver_MSD_h_
+
 #include "ik/config.h"
 #include "ik/solver.h"
 
@@ -18,3 +21,5 @@ int
 solver_MSD_solve(ik_solver_t* solver);
 
 C_HEADER_END
+
+#endif // _solver_MSD_h_

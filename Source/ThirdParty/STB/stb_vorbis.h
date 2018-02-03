@@ -1264,6 +1264,8 @@ static void neighbors(uint16 *x, int n, int *plow, int *phigh)
    }
 }
 
+#define Point StbPoint
+
 // this has been repurposed so y is now the original index instead of y
 typedef struct
 {
@@ -5393,5 +5395,7 @@ int stb_vorbis_get_samples_float(stb_vorbis *f, int channels, float **buffer, in
     0.91 - conditional compiles to omit parts of the API and the infrastructure to support them: STB_VORBIS_NO_PULLDATA_API, STB_VORBIS_NO_PUSHDATA_API, STB_VORBIS_NO_STDIO, STB_VORBIS_NO_INTEGER_CONVERSION
     0.90 - first public release
 */
+
+#undef Point
 
 #endif // STB_VORBIS_HEADER_ONLY

@@ -25,7 +25,7 @@
 #include "../../Core/Object.h"
 #include "../../Database/DbResult.h"
 
-#include <SQLite/sqlite3.h>
+#include <sqlite3.h>
 
 namespace Urho3D
 {

@@ -210,11 +210,11 @@ static void RegisterParticleEmitter2D(asIScriptEngine* engine)
     engine->RegisterObjectMethod("ParticleEmitter2D", "bool get_emitting() const", asMETHOD(ParticleEmitter2D, IsEmitting), asCALL_THISCALL);
 }
 
-static void FakeAddRef(void* ptr)
+static void FakeAddRef2D(void* ptr)
 {
 }
 
-static void FakeReleaseRef(void* ptr)
+static void FakeReleaseRef2D(void* ptr)
 {
 }
 
@@ -227,8 +227,8 @@ static void RegisterTileMapDefs2D(asIScriptEngine* engine)
     engine->RegisterEnumValue("Orientation2D", "O_HEXAGONAL", O_HEXAGONAL);
 
     engine->RegisterObjectType("TileMapInfo2D", 0, asOBJ_REF);
-    engine->RegisterObjectBehaviour("TileMapInfo2D", asBEHAVE_ADDREF, "void f()", asFUNCTION(FakeAddRef), asCALL_CDECL_OBJLAST);
-    engine->RegisterObjectBehaviour("TileMapInfo2D", asBEHAVE_RELEASE, "void f()", asFUNCTION(FakeReleaseRef), asCALL_CDECL_OBJLAST);
+    engine->RegisterObjectBehaviour("TileMapInfo2D", asBEHAVE_ADDREF, "void f()", asFUNCTION(FakeAddRef2D), asCALL_CDECL_OBJLAST);
+    engine->RegisterObjectBehaviour("TileMapInfo2D", asBEHAVE_RELEASE, "void f()", asFUNCTION(FakeReleaseRef2D), asCALL_CDECL_OBJLAST);
     engine->RegisterObjectProperty("TileMapInfo2D", "Orientation2D orientation", offsetof(TileMapInfo2D, orientation_));
     engine->RegisterObjectProperty("TileMapInfo2D", "int width", offsetof(TileMapInfo2D, width_));
     engine->RegisterObjectProperty("TileMapInfo2D", "int height", offsetof(TileMapInfo2D, height_));
