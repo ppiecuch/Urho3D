@@ -3,12 +3,14 @@
 package org.libsdl.app;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.lang.reflect.Method;
+import java.util.Comparator;
 import java.util.Objects;
+import java.lang.reflect.Method;
 
 import android.app.*;
 import android.content.*;
@@ -134,15 +136,21 @@ public class SDLActivity extends Activity {
         // Urho3D: auto load all the shared libraries available in the library path
         if (!mIsSharedLibraryLoaded) {
             String libraryPath = getApplicationInfo().nativeLibraryDir;
-            File[] files = new File(libraryPath).listFiles((dir, filename) -> {
-                // Only list libraries, i.e. exclude gdbserver when it presents
-                return filename.matches("^lib.*\\.so$");
+            File[] files = new File(libraryPath).listFiles(new FilenameFilter() {
+                public boolean accept(File dir, String filename) {
+                    // Only list libraries, i.e. exclude gdbserver when it presents
+                    return filename.matches("^lib.*\\.so$");
+                }
             });
             String errorMsgBrokenLib = "";
             if (files == null) {
                 errorMsgBrokenLib = "no libraries found in path \"" + libraryPath + "\"";
             } else {
-                Arrays.sort(files, (lhs, rhs) -> Long.valueOf(lhs.lastModified()).compareTo(rhs.lastModified()));
+                Arrays.sort(files, new Comparator<File>() {
+                    public int compare(final File lhs, File rhs) {
+                        return Long.valueOf(lhs.lastModified()).compareTo(rhs.lastModified());
+                    }
+                });
                 ArrayList<String> libraryNames = new ArrayList<>(files.length);
                 for (final File libraryFilename : files) {
                     String name = libraryFilename.getName().replaceAll("^lib(.*)\\.so$", "$1");
