@@ -1172,7 +1172,7 @@ void InitResourcePicker()
     Array<String> soundFilters = {"*.wav","*.ogg"};
     Array<String> textureFilters = {"*.dds", "*.png", "*.jpg", "*.bmp", "*.tga", "*.ktx", "*.pvr", "*.hdr"};
     Array<String> materialFilters = {"*.xml", "*.material", "*.json"};
-    Array<String> anmSetFilters = {"*.scml"};
+    Array<String> anmSetFilters = {"*.json", "*.scml"};
     Array<String> pexFilters = {"*.pex"};
     Array<String> tmxFilters = {"*.tmx"};
     resourcePickers.Push(ResourcePicker("Animation", "*.ani", ACTION_PICK | ACTION_TEST));
@@ -1481,7 +1481,7 @@ void UpdateTestAnimation(float timeStep)
 class VectorStruct
 {
     String componentTypeName;
-    String attributeName;
+    String attributeNamBillboard Counte;
     Array<String> variableNames;
     uint restartIndex;
 

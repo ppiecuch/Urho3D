@@ -514,6 +514,7 @@ if (XCODE AND NOT ARCH)    # These variables are used to control the recursion a
                 CMAKE_ARGS -DARCH=i386 -DINSTALL_ARCHIVE_DIR=${CMAKE_CURRENT_BINARY_DIR} -DURHO3D_64BIT=0 ${LUAJIT_PASSTHRU_OPTS} ${ALTERNATE_COMMAND} BUILD_COMMAND "" INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install --config $<CONFIG> -- -sdk iphonesimulator)
             if (URHO3D_64BIT)
                 # 64-bit iOS universal binaries: for iPhoneOS SDK contains arm64 and armv7 archs, and for iPhoneSimulator SDK contains x86_64 and i386 archs
+                message(STATUS "${TARGET_NAME} Building universal library")
                 ExternalProject_Add (${TARGET_NAME}_x86_64
                     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}
                     CMAKE_ARGS -DARCH=x86_64 -DINSTALL_ARCHIVE_DIR=${CMAKE_CURRENT_BINARY_DIR} ${LUAJIT_PASSTHRU_OPTS} ${ALTERNATE_COMMAND} BUILD_COMMAND "" INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install --config $<CONFIG> -- -sdk iphonesimulator)

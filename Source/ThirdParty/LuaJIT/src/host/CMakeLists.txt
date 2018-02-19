@@ -71,7 +71,7 @@ setup_executable (PRIVATE TOOL NODEPS)
 unset (LIBS)
 
 # Define target name
-set (TARGET_NAME buildvm)
+set (TARGET_NAME buildvm${EXEPOSTFIX})
 
 # Add definitions specific for host C compiler
 add_definitions (${HOST_XCFLAGS} ${TARGET_ARCH})
@@ -86,7 +86,7 @@ add_custom_command (OUTPUT ${GEN_ARCH_H}
     COMMAND minilua ${DASM} ${DASM_FLAGS} -o ${GEN_ARCH_H} ${DASM_DASC}
     DEPENDS minilua ${DASM_LUA} ${DASM_DASC}
     WORKING_DIRECTORY ${DASM_DIR}
-    COMMENT "Generating buildvm arch header file")
+    COMMENT "Generating buildvm${EXEPOSTFIX} arch header file")
 
 # Define source files
 file (GLOB C_FILES buildvm*.c)

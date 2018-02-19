@@ -67,8 +67,10 @@ if (CMAKE_PROJECT_NAME STREQUAL Urho3D AND TARGET Urho3D)
     if (URHO3D_LUA)
         # ditto for Lua/LuaJIT
         list (APPEND URHO3D_INCLUDE_DIRS ${URHO3D_HOME}/include/Urho3D/ThirdParty/Lua${JIT})
+        set (URHO3D_LIBRARIES ${URHO3D_LIBRARIES} Lua${JIT})
     endif ()
-    set (URHO3D_LIBRARIES Urho3D)
+
+    set (URHO3D_LIBRARIES ${URHO3D_LIBRARIES} Urho3D)
     set (FOUND_MESSAGE "Found Urho3D: as CMake target")
     set (URHO3D_COMPILE_RESULT TRUE)
 else ()

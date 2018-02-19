@@ -53,6 +53,9 @@ if (NOT CMAKE_PROJECT_NAME STREQUAL Urho3D)
     # Add dependency targets
     add_subdirectory (${BAKED_CMAKE_SOURCE_DIR}/Source/ThirdParty/Lua host/Lua)
     add_subdirectory (${BAKED_CMAKE_SOURCE_DIR}/Source/ThirdParty/toluapp/src/lib host/toluapp)
+
+    list (APPEND LIBS Lua)
+    list (APPEND LIBS toluapp)
 endif ()
 
 # Define target name
@@ -73,8 +76,6 @@ add_custom_command (OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/generated/toluabind.c
 # Define source files
 define_source_files (EXTRA_CPP_FILES tolua.c ${CMAKE_CURRENT_BINARY_DIR}/generated/toluabind.c)
 
-# Define dependency libs
-set (LIBS toluapp Lua)
 if (NOT MSVC)
     list (APPEND LIBS m)
 endif ()

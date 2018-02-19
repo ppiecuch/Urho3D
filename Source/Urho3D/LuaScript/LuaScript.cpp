@@ -387,7 +387,7 @@ int LuaScript::Loader(lua_State* L)
 
 void LuaScript::ReplacePrint()
 {
-    static const struct luaL_reg reg[] =
+    static const struct luaL_Reg reg[] =
     {
         {"print", &LuaScript::Print},
         {nullptr, nullptr}

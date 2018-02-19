@@ -501,7 +501,7 @@ if (APPLE)
         # iOS-specific setup
         add_definitions (-DIOS)
         if (URHO3D_64BIT)
-            set (CMAKE_OSX_ARCHITECTURES $(ARCHS_STANDARD))
+            set (CMAKE_OSX_ARCHITECTURES $(ARCHS_STANDARD_64_BIT))
         else ()
             message (WARNING "URHO3D_64BIT=0 for iOS is a deprecated option and should not be used as we are phasing out 32-bit only mode")
             set (CMAKE_OSX_ARCHITECTURES $(ARCHS_STANDARD_32_BIT))

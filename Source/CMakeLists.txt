@@ -109,6 +109,8 @@ if (URHO3D_URHO2D)
         add_subdirectory (ThirdParty/spine)
         # Add definition for Spine
         add_definitions (-DURHO3D_SPINE)
+        set_property (GLOBAL PROPERTY URHO3D_SPINE_FOUND 1)
+        set_property (GLOBAL PROPERTY URHO3D_SPINE_LOC "${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/spine")
     endif ()
 endif ()
 
