@@ -250,6 +250,13 @@ Vector3 Graphics::GetDisplayDPI(int monitor) const
     return result;
 }
 
+Vector2 Graphics::GetDisplayScaling() const
+{
+    int logicalWidth, logicalHeight;
+    SDL_GetWindowSize(window_, &logicalWidth, &logicalHeight);
+    return Vector2(width_/logicalWidth, width_/logicalHeight);
+}
+
 void Graphics::Maximize()
 {
     if (!window_)

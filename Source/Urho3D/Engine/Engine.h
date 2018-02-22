@@ -29,7 +29,9 @@ namespace Urho3D
 {
 
 class Console;
+class SystemUIConsole;
 class DebugHud;
+class SystemUIDebugHud;
 
 /// Urho3D engine. Creates the other subsystems.
 class URHO3D_API Engine : public Object
@@ -48,10 +50,16 @@ public:
     bool InitializeResourceCache(const VariantMap& parameters, bool removeOld = true);
     /// Run one frame.
     void RunFrame();
-    /// Create the console and return it. May return null if engine configuration does not allow creation (headless mode.)
+    /// Create the console (imgui console) and return it. May return null if engine configuration does not allow creation (headless mode.)
     Console* CreateConsole();
+#ifdef URHO3D_SYSTEMUI
+    SystemUIConsole* CreateSystemUIConsole();
+#endif
     /// Create the debug hud.
     DebugHud* CreateDebugHud();
+#ifdef URHO3D_SYSTEMUI
+    SystemUIDebugHud* CreateSystemUIDebugHud();
+#endif
     /// Set minimum frames per second. If FPS goes lower than this, time will appear to slow down.
     void SetMinFps(int fps);
     /// Set maximum frames per second. The engine will sleep if FPS is higher than this.

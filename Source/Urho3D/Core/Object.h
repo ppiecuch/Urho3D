@@ -32,6 +32,32 @@ namespace Urho3D
 
 class Context;
 class EventHandler;
+class Engine;
+class Time;
+class WorkQueue;
+#if URHO3D_PROFILING
+class Profiler;
+#endif
+class FileSystem;
+#if URHO3D_LOGGING
+class Log;
+#endif
+class ResourceCache;
+class Localization;
+#if URHO3D_NETWORK
+class Network;
+#endif
+class Input;
+class Audio;
+class UI;
+#if URHO3D_SYSTEMUI
+class SystemUI;
+#endif
+class Graphics;
+class Renderer;
+#if URHO3D_TASKS
+class Tasks;
+#endif
 
 /// Type info.
 class URHO3D_API TypeInfo
@@ -166,11 +192,55 @@ public:
     /// Return object category. Categories are (optionally) registered along with the object factory. Return an empty string if the object category is not registered.
     const String& GetCategory() const;
 
+    /// Send event with parameters to all subscribers.
+    void SendEvent(StringHash eventType, const VariantMap& eventData);
     /// Block object from sending and receiving events.
     void SetBlockEvents(bool block) { blockEvents_ = block; }
     /// Return sending and receiving events blocking status.
     bool GetBlockEvents() const { return blockEvents_; }
 
+    /// Return engine subsystem.
+    Engine* GetEngine() const;
+    /// Return time subsystem.
+    Time* GetTime() const;
+    /// Return work queue subsystem.
+    WorkQueue* GetWorkQueue() const;
+#if URHO3D_PROFILING
+    /// Return profiler subsystem.
+    Profiler* GetProfiler() const;
+#endif
+    /// Return file system subsystem.
+    FileSystem* GetFileSystem() const;
+#if URHO3D_LOGGING
+    /// Return logging subsystem.
+    Log* GetLog() const;
+#endif
+    /// Return resource cache subsystem.
+    ResourceCache* GetCache() const;
+    /// Return localization subsystem.
+    Localization* GetLocalization() const;
+#if URHO3D_NETWORK
+    /// Return network subsystem.
+    Network* GetNetwork() const;
+#endif
+    /// Return input subsystem.
+    Input* GetInput() const;
+    /// Return audio subsystem.
+    Audio* GetAudio() const;
+    /// Return UI subsystem.
+    UI* GetUI() const;
+#if URHO3D_SYSTEMUI
+    /// Return system ui subsystem.
+    SystemUI* GetSystemUI() const;
+#endif
+    /// Return graphics subsystem.
+    Graphics* GetGraphics() const;
+    /// Return renderer subsystem.
+    Renderer* GetRenderer() const;
+#if URHO3D_TASKS
+    /// Return tasks subsystem.
+    Tasks* GetTasks() const;
+#endif
 protected:
     /// Execution context.
     Context* context_;
@@ -374,4 +444,32 @@ struct URHO3D_API EventNameRegistrar
 /// Convenience macro to construct an EventHandler that points to a receiver object and its member function, and also defines a userdata pointer.
 #define URHO3D_HANDLER_USERDATA(className, function, userData) (new Urho3D::EventHandlerImpl<className>(this, &className::function, userData))
 
+// Explicit template specializations for most commonly used engine subsystems. They sidestep HashMap lookup and return
+// subsystem pointer cached in Context object.
+template <> URHO3D_API Engine* Object::GetSubsystem<Engine>() const;
+template <> URHO3D_API Time* Object::GetSubsystem<Time>() const;
+template <> URHO3D_API WorkQueue* Object::GetSubsystem<WorkQueue>() const;
+#if URHO3D_PROFILING
+template <> URHO3D_API Profiler* Object::GetSubsystem<Profiler>() const;
+#endif
+template <> URHO3D_API FileSystem* Object::GetSubsystem<FileSystem>() const;
+#if URHO3D_LOGGING
+template <> URHO3D_API Log* Object::GetSubsystem<Log>() const;
+#endif
+template <> URHO3D_API ResourceCache* Object::GetSubsystem<ResourceCache>() const;
+template <> URHO3D_API Localization* Object::GetSubsystem<Localization>() const;
+#if URHO3D_NETWORK
+template <> URHO3D_API Network* Object::GetSubsystem<Network>() const;
+#endif
+template <> URHO3D_API Input* Object::GetSubsystem<Input>() const;
+template <> URHO3D_API Audio* Object::GetSubsystem<Audio>() const;
+template <> URHO3D_API UI* Object::GetSubsystem<UI>() const;
+#if URHO3D_SYSTEMUI
+template <> URHO3D_API SystemUI* Object::GetSubsystem<SystemUI>() const;
+#endif
+template <> URHO3D_API Graphics* Object::GetSubsystem<Graphics>() const;
+template <> URHO3D_API Renderer* Object::GetSubsystem<Renderer>() const;
+#if URHO3D_TASKS
+template <> URHO3D_API Tasks* Object::GetSubsystem<Tasks>() const;
+#endif
 }

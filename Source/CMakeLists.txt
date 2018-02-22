@@ -64,9 +64,23 @@ if (URHO3D_LIB_TYPE STREQUAL SHARED AND NOT WIN32 AND NOT ANDROID AND NOT IOS AN
 endif ()
 
 # Add targets
-foreach (TARGET FreeType LZ4 PugiXml rapidjson SDL StanHull STB)
+foreach (TARGET FreeType LZ4 PugiXml rapidjson SDL StanHull STB IconFontCppHeaders cr)
     add_subdirectory (ThirdParty/${TARGET})
 endforeach ()
+
+if (DESKTOP AND NOT APPLE)
+    add_subdirectory(ThirdParty/crunch)
+endif ()
+
+if (URHO3D_SYSTEMUI)
+    add_subdirectory(ThirdParty/imgui)
+    add_subdirectory(ThirdParty/ImGuizmo)
+    add_subdirectory(ThirdParty/nativefiledialog)
+endif ()
+
+if (URHO3D_TASKS)
+    add_subdirectory(ThirdParty/fcontext)
+endif ()
 
 if (URHO3D_ANGELSCRIPT)
     add_subdirectory (ThirdParty/AngelScript)

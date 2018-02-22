@@ -366,6 +366,8 @@ public:
     /// Return whether sRGB conversion on rendertarget writing is supported.
     bool GetSRGBWriteSupport() const { return sRGBWriteSupport_; }
 
+    /// Get the SDL_Window as a void* to avoid having to include the graphics implementation
+    void* GetSDLWindow() { return window_; }
     /// Return supported fullscreen resolutions (third component is refreshRate). Will be empty if listing the resolutions is not supported on the platform (e.g. Web).
     PODVector<IntVector3> GetResolutions(int monitor) const;
     /// Return supported multisampling levels.
@@ -380,6 +382,8 @@ public:
     bool GetMaximized() const;
     /// Return display dpi information: (hdpi, vdpi, ddpi). On failure returns zero vector.
     Vector3 GetDisplayDPI(int monitor=0) const;
+    /// Return display scaling (retina).
+    Vector2 GetDisplayScaling() const;
 
     /// Return hardware format for a compressed image format, or 0 if unsupported.
     unsigned GetFormat(CompressedFormat format) const;

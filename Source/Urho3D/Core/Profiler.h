@@ -26,8 +26,27 @@
 #include "../Core/Thread.h"
 #include "../Core/Timer.h"
 
+#ifdef URHO3D_PROFILING
+
 namespace Urho3D
 {
+
+
+static const int PROFILER_DEFAULT_PORT = 28077;
+static const uint32_t PROFILER_COLOR_DEFAULT = 0xffffecb3;
+static const uint32_t PROFILER_COLOR_EVENTS = 0xffff9800;
+static const uint32_t PROFILER_COLOR_RESOURCES = 0xff00bcd4;
+
+// Copied from easy_profiler
+enum ProfilerBlockStatus
+{
+    OFF = 0,
+    ON = 1,
+    FORCE_ON = ON | 2,
+    OFF_RECURSIVE = 4,
+    ON_WITHOUT_CHILDREN = ON | OFF_RECURSIVE,
+    FORCE_ON_WITHOUT_CHILDREN = FORCE_ON | OFF_RECURSIVE,
+};
 
 /// Profiling data for one block in the profiling tree.
 class URHO3D_API ProfilerBlock
@@ -208,6 +227,11 @@ public:
     /// Begin a new interval.
     void BeginInterval();
 
+    /// Enables or disables event profiling.
+    void SetEventProfilingEnabled(bool enabled) { enableEventProfiling_ = enabled; }
+    /// Returns true if event profiling is enabled, false otherwise.
+    bool GetEventProfilingEnabled() const { return enableEventProfiling_; }
+
     /// Return profiling data as text output. This method is not thread-safe.
     const String& PrintData(bool showUnused = false, bool showTotal = false, unsigned maxDepth = M_MAX_UNSIGNED) const;
     /// Return the current profiling block.
@@ -225,6 +249,10 @@ protected:
     ProfilerBlock* root_;
     /// Frames in the current interval.
     unsigned intervalFrames_;
+
+private:
+    /// Flag which enables event profiling.
+    bool enableEventProfiling_ = true;
 };
 
 /// Helper class for automatically beginning and ending a profiling block
@@ -251,10 +279,13 @@ private:
     Profiler* profiler_;
 };
 
-#ifdef URHO3D_PROFILING
-#define URHO3D_PROFILE(name) Urho3D::AutoProfileBlock profile_ ## name (GetSubsystem<Urho3D::Profiler>(), #name)
+#define URHO3D_TOKEN_JOIN(x, y) x ## y
+#define URHO3D_TOKEN_CONCATENATE(x, y) URHO3D_TOKEN_JOIN(x, y)
+#define URHO3D_PROFILE(name, ...) Urho3D::AutoProfileBlock profile_ ## name (GetSubsystem<Urho3D::Profiler>(), #name)
+#define URHO3D_PROFILE_SCOPED(name, ...) Urho3D::AutoProfileBlock URHO3D_TOKEN_CONCATENATE(profiler_, __LINE__) (GetSubsystem<Urho3D::Profiler>(), name)
 #else
-#define URHO3D_PROFILE(name)
+#define URHO3D_PROFILE(name, ...)
+#define URHO3D_PROFILE_SCOPED(name, ...)
 #endif
 
 }

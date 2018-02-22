@@ -25,6 +25,9 @@
 #include "../Audio/OggVorbisSoundStream.h"
 #include "../Audio/Sound.h"
 
+#ifndef STB_VORBIS_HEADER_ONLY
+#define STB_VORBIS_HEADER_ONLY
+#endif
 #include <STB/stb_vorbis.h>
 
 #include "../DebugNew.h"

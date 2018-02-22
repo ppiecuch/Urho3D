@@ -66,9 +66,9 @@ static void RegisterControls(asIScriptEngine* engine)
 
 static void RegisterInputConstants(asIScriptEngine* engine)
 {
-    engine->RegisterGlobalProperty("const int MOUSEB_LEFT", (void*)&MOUSEB_LEFT);
-    engine->RegisterGlobalProperty("const int MOUSEB_MIDDLE", (void*)&MOUSEB_MIDDLE);
-    engine->RegisterGlobalProperty("const int MOUSEB_RIGHT", (void*)&MOUSEB_RIGHT);
+    engine->RegisterGlobalProperty("const int MOUSEB_LEFT", (void*)&MB_LEFT);
+    engine->RegisterGlobalProperty("const int MOUSEB_MIDDLE", (void*)&MB_MIDDLE);
+    engine->RegisterGlobalProperty("const int MOUSEB_RIGHT", (void*)&MB_RIGHT);
     engine->RegisterGlobalProperty("const int QUAL_SHIFT", (void*)&QUAL_SHIFT);
     engine->RegisterGlobalProperty("const int QUAL_CTRL", (void*)&QUAL_CTRL);
     engine->RegisterGlobalProperty("const int QUAL_ALT", (void*)&QUAL_ALT);

@@ -32,6 +32,7 @@
 #include "../Engine/DebugHud.h"
 #include "../Engine/Engine.h"
 #include "../Engine/EngineDefs.h"
+#include "../Engine/EngineEvents.h"
 #include "../Graphics/Graphics.h"
 #include "../Graphics/Renderer.h"
 #include "../Input/Input.h"
@@ -61,6 +62,14 @@
 #include "../UI/UI.h"
 #ifdef URHO3D_URHO2D
 #include "../Urho2D/Urho2D.h"
+#endif
+#ifdef URHO3D_SYSTEMUI
+#include "../SystemUI/SystemUI.h"
+#include "../SystemUI/Console.h"
+#include "../SystemUI/DebugHud.h"
+#endif
+#ifdef URHO3D_TASKS
+#include "../Core/Tasks.h"
 #endif
 
 #if defined(__EMSCRIPTEN__) && defined(URHO3D_TESTING)
@@ -140,6 +149,9 @@ Engine::Engine(Context* context) :
     context_->RegisterSubsystem(new Audio(context_));
     context_->RegisterSubsystem(new UI(context_));
 
+#if URHO3D_TASKS
+    context_->RegisterSubsystem(new Tasks(context_));
+#endif
     // Register object factories for libraries which are not automatically registered along with subsystem creation
     RegisterSceneLibrary(context_);
 
@@ -175,6 +187,8 @@ bool Engine::Initialize(const VariantMap& parameters)
     {
         context_->RegisterSubsystem(new Graphics(context_));
         context_->RegisterSubsystem(new Renderer(context_));
+        context_->graphics_ = context_->GetSubsystem<Graphics>();
+        context_->renderer_ = context_->GetSubsystem<Renderer>();
     }
     else
     {
@@ -304,6 +318,13 @@ bool Engine::Initialize(const VariantMap& parameters)
         timeOut_ = GetParameter(parameters, EP_TIME_OUT, 0).GetInt() * 1000000LL;
 #endif
 
+    if (!headless_)
+    {
+#ifdef URHO3D_SYSTEMUI
+        context_->RegisterSubsystem(new SystemUI(context_));
+#endif
+    }
+
 #ifdef URHO3D_PROFILING
     if (GetParameter(parameters, EP_EVENT_PROFILER, true).GetBool())
     {
@@ -315,6 +336,8 @@ bool Engine::Initialize(const VariantMap& parameters)
 
     URHO3D_LOGINFO("Initialized engine");
     initialized_ = true;
+    SendEvent(E_ENGINEINITIALIZED);
+
     return true;
 }
 
@@ -368,7 +391,7 @@ bool Engine::InitializeResourceCache(const VariantMap& parameters, bool removeOl
                         return false;
                 }
             }
-            if (j == resourcePrefixPaths.Size())
+            if (j == resourcePrefixPaths.Size() && !headless_)
             {
                 URHO3D_LOGERRORF(
                     "Failed to add resource path '%s', check the documentation on how to set the 'resource prefix path'",
@@ -400,7 +423,7 @@ bool Engine::InitializeResourceCache(const VariantMap& parameters, bool removeOl
                     return false;
             }
         }
-        if (j == resourcePrefixPaths.Size())
+        if (j == resourcePrefixPaths.Size() && !headless_)
         {
             URHO3D_LOGERRORF(
                 "Failed to add resource package '%s', check the documentation on how to set the 'resource prefix path'",
@@ -433,7 +456,7 @@ bool Engine::InitializeResourceCache(const VariantMap& parameters, bool removeOl
                     if (dir.StartsWith("."))
                         continue;
 
-                    String autoResourceDir = autoLoadPath + "/" + dir;
+                    String autoResourceDir = AddTrailingSlash(autoLoadPath) + dir;
                     if (!cache->AddResourceDir(autoResourceDir, 0))
                         return false;
                 }
@@ -539,6 +562,24 @@ Console* Engine::CreateConsole()
     return console;
 }
 
+#ifdef URHO3D_SYSTEMUI
+SystemUIConsole* Engine::CreateSystemUIConsole()
+{
+    if (headless_ || !initialized_)
+        return nullptr;
+
+    // Return existing console if possible
+    auto* console = GetSubsystem<SystemUIConsole>();
+    if (!console)
+    {
+        console = new SystemUIConsole(context_);
+        context_->RegisterSubsystem(console);
+    }
+
+    return console;
+}
+#endif
+
 DebugHud* Engine::CreateDebugHud()
 {
     if (headless_ || !initialized_)
@@ -554,6 +595,24 @@ DebugHud* Engine::CreateDebugHud()
 
     return debugHud;
 }
+
+#ifdef URHO3D_SYSTEMUI
+SystemUIDebugHud* Engine::CreateSystemUIDebugHud()
+{
+    if (headless_ || !initialized_)
+        return nullptr;
+
+    // Return existing debug HUD if possible
+    auto* debugHud = GetSubsystem<SystemUIDebugHud>();
+    if (!debugHud)
+    {
+        debugHud = new SystemUIDebugHud(context_);
+        context_->RegisterSubsystem(debugHud);
+    }
+
+    return debugHud;
+}
+#endif
 
 void Engine::SetTimeStepSmoothing(int frames)
 {
@@ -854,6 +913,8 @@ VariantMap Engine::ParseParameters(const Vector<String>& arguments)
                 ret[EP_HIGH_DPI] = false;
             else if (argument == "s")
                 ret[EP_WINDOW_RESIZABLE] = true;
+            else if (argument == "hd")
+                ret[EP_HIGH_DPI] = true;
             else if (argument == "q")
                 ret[EP_LOG_QUIET] = true;
             else if (argument == "log" && !value.Empty())
@@ -952,6 +1013,17 @@ VariantMap Engine::ParseParameters(const Vector<String>& arguments)
                 ret[EP_TIME_OUT] = ToInt(value);
                 ++i;
             }
+#endif
+#ifdef URHO3D_PROFILE
+            else if (argument == "pr")
+                ret[EP_PROFILER_LISTEN] = true;
+            else if (argument == "prp" && !value.Empty())
+            {
+                ret[EP_PROFILER_PORT] = ToInt(value);
+                ++i;
+            }
+            else if (argument == "prnoev")
+                ret[EP_EVENT_PROFILER] = false;
 #endif
         }
     }

@@ -551,6 +551,8 @@ bool Graphics::SetMode(int width, int height, bool fullscreen, bool borderless, 
     SDL_GetWindowSize(window_, &logicalWidth, &logicalHeight);
     highDPI_ = (width_ != logicalWidth) || (height_ != logicalHeight);
 
+    URHO3D_LOGINFOF("Graphics highDPI scaling: %f", float(width_)/float(logicalWidth));
+
     // Reset rendertargets and viewport for the new screen mode
     ResetRenderTargets();
 

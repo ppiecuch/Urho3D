@@ -368,6 +368,9 @@ if (URHO3D_LUAJIT)
     set (JIT JIT)
     set (URHO3D_LUA 1)
 endif ()
+if (URHO3D_SYSTEMUI)
+    add_definitions(-DIMGUI_DISABLE_OBSOLETE_FUNCTIONS=1 -DIMGUI_DEFINE_MATH_OPERATORS=1)
+endif ()
 
 # Union all the sysroot variables into one so it can be referred to generically later
 set (SYSROOT ${CMAKE_SYSROOT} ${MINGW_SYSROOT} ${IOS_SYSROOT} ${TVOS_SYSROOT} CACHE INTERNAL "Path to system root of the cross-compiling target")  # SYSROOT is empty for native build
@@ -449,6 +452,7 @@ foreach (OPT
         URHO3D_THREADING
         URHO3D_URHO2D
         URHO3D_WEBP
+        URHO3D_SYSTEMUI
         URHO3D_WIN32_CONSOLE)
     if (${OPT})
         add_definitions (-D${OPT})

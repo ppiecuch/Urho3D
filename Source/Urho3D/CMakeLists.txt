@@ -103,7 +103,7 @@ if (WIN32)
 endif ()
 
 # Define source files
-foreach (DIR IK Navigation Network Physics Urho2D WebP)
+foreach (DIR IK Navigation Network Physics Urho2D WebP SystemUI)
     string (TOUPPER URHO3D_${DIR} OPT)
     if (NOT ${OPT})
         list (APPEND EXCLUDED_SOURCE_DIRS ${DIR})
@@ -294,7 +294,11 @@ list (APPEND SOURCE_FILES ${GEN_CPP_FILES} ${ALL_OBJ_FILES} librevision.h Urho3D
 
 # Define dependency libs
 # Add include directories to find the precompiled header, export header, and installed headers from thirdparty libs
-set (INCLUDE_DIRS ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_BINARY_DIR}/${DEST_INCLUDE_DIR}/ThirdParty)
+set (INCLUDE_DIRS
+    ${CMAKE_CURRENT_BINARY_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_BINARY_DIR}/include
+    ${CMAKE_BINARY_DIR}/${DEST_INCLUDE_DIR}/ThirdParty)
 if (URHO3D_PHYSICS)
     # Bullet library depends on its own include dir to be added in the header search path
     # This is more practical than patching its header files in many places to make them work with relative path
@@ -308,6 +312,10 @@ if (URHO3D_LUA)
     # Lua/LuaJIT library depends on its own include dir to be added in the header search path
     # This is more practical than patching its header files in many places to make them work with relative path
     list (APPEND INCLUDE_DIRS ${CMAKE_BINARY_DIR}/${DEST_INCLUDE_DIR}/ThirdParty/Lua${JIT})
+endif ()
+if (URHO3D_SYSTEMUI)
+    # imgui dependencies
+    list (APPEND INCLUDE_DIRS ${CMAKE_BINARY_DIR}/${DEST_INCLUDE_DIR}/ThirdParty/STB)
 endif ()
 GET_PROPERTY(URHO3D_SPINE_FOUND GLOBAL PROPERTY "URHO3D_SPINE_FOUND")
 if (URHO3D_SPINE_FOUND)
@@ -483,7 +491,7 @@ install_header_files (DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/ DESTINATION ${DEST_
 # Generate the include-all-headers header file even though we do not encourage Urho3D library users to use it
 list (SORT URHO_HEADERS)
 list (REVERSE URHO_HEADERS)
-set (OPTIONAL_SUBS AngelScript Database IK Lua Navigation Network Physics Urho2D)
+set (OPTIONAL_SUBS AngelScript Database IK Lua Navigation Network Physics Urho2D SystemUI)
 foreach (SUB ${OPTIONAL_SUBS})
     if (URHO_HEADERS MATCHES "(include/Urho3D/${SUB}[^;]+)")
         list (FIND URHO_HEADERS ${CMAKE_MATCH_1} FOUND_INDEX)
